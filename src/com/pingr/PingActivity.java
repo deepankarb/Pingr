@@ -44,13 +44,7 @@ public class PingActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 			case R.id.buttonPing :
-
-				if (Pingr.ping(targetEditText.getText().toString())) {
-
-				} else {
-
-				}
-
+				PingTarget mTarget=	Pingr.pingAsyncTask(targetEditText.getText().toString().trim(), PING_TIMEOUT);
 				break;
 
 			default :

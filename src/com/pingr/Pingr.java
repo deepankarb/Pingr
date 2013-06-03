@@ -22,11 +22,12 @@ import android.util.Log;
  */
 public class Pingr {
 
+	public static final String TAG = "Pingr";
 	private static InetAddress targetAddress;
 	private static int pingTimeout = 1000;
 	private static boolean result;
 
-	public static boolean ping(final String host) {
+	public static boolean pingIsReachable(final String host) {
 
 		new Thread(new Runnable() {
 
@@ -60,7 +61,7 @@ public class Pingr {
 		return result;
 	}
 
-	public static boolean ping(String host, int timeout) {
+	public static boolean pingIsReachable(String host, int timeout) {
 		boolean result;
 
 		try {
@@ -88,11 +89,20 @@ public class Pingr {
 
 	}
 
-	public static class PingTask extends AsyncTask<String, Void, Void> {
+	public static PingTarget pingAsyncTask(String host, int timeout) {
+		PingTarget result = new PingTarget(host);
+		new PingTask().execute(result);
+		return result;
+	}
+
+	public static class PingTask extends AsyncTask<PingTarget, Void, Void> {
 		PipedOutputStream mPOut;
 		PipedInputStream mPIn;
 		LineNumberReader mReader;
 		Process mProcess;
+		String pingCmd = "/system/bin/ping";
+		String pingCmdOpts = "-c10";
+
 		// TextView mText = (TextView) findViewById(R.id.text);
 		@Override
 		protected void onPreExecute() {
@@ -101,6 +111,10 @@ public class Pingr {
 				mPIn = new PipedInputStream(mPOut);
 				mReader = new LineNumberReader(new InputStreamReader(mPIn));
 			} catch (IOException e) {
+				if (BuildConfig.DEBUG) {
+					e.printStackTrace();
+				}
+
 				cancel(true);
 			}
 
@@ -115,10 +129,10 @@ public class Pingr {
 		}
 
 		@Override
-		protected Void doInBackground(String... params) {
+		protected Void doInBackground(PingTarget... params) {
 			try {
 				mProcess = new ProcessBuilder()
-						.command("/system/bin/ping", params[0])
+						.command(pingCmd, pingCmdOpts, params[0].getHostname())
 						.redirectErrorStream(true).start();
 
 				try {
@@ -142,20 +156,45 @@ public class Pingr {
 					mProcess = null;
 				}
 			} catch (IOException e) {
+				if (BuildConfig.DEBUG) {
+					e.printStackTrace();
+				}
 			}
 			return null;
 		}
+
 		@Override
 		protected void onProgressUpdate(Void... values) {
 			try {
 				// Is a line ready to read from the "ping" command?
 				while (mReader.ready()) {
-					Log.v("PingTask", mReader.readLine());
+					String readLine = mReader.readLine();
+					String minRtt;
+					String maxRtt;
+					String avgRtt;
+					// if (BuildConfig.DEBUG){
+					// Log.v(TAG, readLine);
+					// }
+					if (readLine.startsWith("rtt")) {
+						readLine = readLine
+								.substring(readLine.indexOf('='));
+						minRtt = readLine.substring(2,
+								readLine.indexOf('/')).trim();
+						avgRtt = readLine.substring(readLine.indexOf('/'));
+						avgRtt = avgRtt.substring(0,avgRtt.indexOf('/'));
+						if (BuildConfig.DEBUG) {							
+							Log.v(TAG, readLine + ":" + minRtt+":"+avgRtt);
+						}
+					}
 					// This just displays the output, you should typically parse
 					// it I guess.
 					// mText.setText(mReader.readLine());
 				}
 			} catch (IOException t) {
+				if (BuildConfig.DEBUG) {
+					t.printStackTrace();
+				}
+
 			}
 		}
 	}

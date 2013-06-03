@@ -5,10 +5,17 @@ package com.pingr;
 
 import java.util.List;
 
+import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 /**
  * @author bharddee
@@ -17,14 +24,20 @@ import android.widget.ListAdapter;
 public class TargetListAdapter implements ListAdapter {
 
 	private static final int MAX_TARGETS = 10;
-
 	private List<PingTarget> targetList;
+	private Context context;
 
-	public TargetListAdapter(List<PingTarget> inList) {
+	private class ViewHolder {
+		TextView targetAddress;
+		TextView targetRtt;
+		ImageView rttLight;
+	}
+
+	public TargetListAdapter(List<PingTarget> inList, Context context) {
 		if (inList != null && inList.size() > 0) {
 			this.targetList = inList;
+			this.context = context;
 		}
-
 	}
 
 	@Override
@@ -59,8 +72,33 @@ public class TargetListAdapter implements ListAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
-		return null;
+
+		ViewHolder holder;
+		LayoutInflater mInflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		if (convertView == null) {
+			convertView = mInflater
+					.inflate(R.layout.list_target, parent, false);
+			holder = new ViewHolder();
+			holder.targetAddress = (TextView) convertView
+					.findViewById(R.id.text_target_address);
+			holder.targetRtt = (TextView) convertView
+					.findViewById(R.id.text_target_rtt);
+			holder.rttLight = (ImageView) convertView
+					.findViewById(R.id.image_target_rtt);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+
+		holder.targetAddress.setText(targetList.get(position).getHostname());
+		holder.targetRtt.setText(String.valueOf(targetList.get(position)
+				.getRtt()));
+		holder.rttLight.setImageDrawable(getStatusImageDrawable((targetList.get(position))));
+
+		return convertView;
+
 	}
 
 	@Override
@@ -105,6 +143,29 @@ public class TargetListAdapter implements ListAdapter {
 	public boolean isEnabled(int arg0) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public Drawable getStatusImageDrawable(PingTarget p) {
+		Drawable result;
+		switch (p.getStatus()) {
+
+		case GREEN:
+			result = context.getResources().getDrawable(R.drawable.rtt_green);
+			break;
+		case ORANGE:
+			result = context.getResources().getDrawable(R.drawable.rtt_orange);
+			break;
+		case RED:
+			result = context.getResources().getDrawable(R.drawable.rtt_red);
+			break;
+		case YELLOW:
+			result = context.getResources().getDrawable(R.drawable.rtt_yellow);
+			break;
+		default:
+			result = context.getResources().getDrawable(R.drawable.rtt_red);
+			break;
+		}
+		return result;
 	}
 
 }
