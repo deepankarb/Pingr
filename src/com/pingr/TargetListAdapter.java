@@ -3,41 +3,41 @@
  */
 package com.pingr;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 /**
  * @author bharddee
  * 
  */
-public class TargetListAdapter implements ListAdapter {
+public class TargetListAdapter extends ArrayAdapter<PingTarget> {
+
+	public TargetListAdapter(Context context, int textViewResourceId) {
+		super(context, textViewResourceId);
+		this.context = context;
+		this.targetList = new ArrayList<PingTarget>();
+	}
 
 	private static final int MAX_TARGETS = 10;
 	private List<PingTarget> targetList;
 	private Context context;
+	private static final String TAG = "TargetListAdapter";
 
 	private class ViewHolder {
 		TextView targetAddress;
 		TextView targetRtt;
 		ImageView rttLight;
-	}
-
-	public TargetListAdapter(List<PingTarget> inList, Context context) {
-		if (inList != null && inList.size() > 0) {
-			this.targetList = inList;
-			this.context = context;
-		}
 	}
 
 	@Override
@@ -50,11 +50,11 @@ public class TargetListAdapter implements ListAdapter {
 	}
 
 	@Override
-	public Object getItem(int arg0) {
+	public PingTarget getItem(int arg0) {
 		if (arg0 > 0 && arg0 < targetList.size()) {
 			return targetList.get(arg0);
 		} else {
-			return 0;
+			return null;
 		}
 	}
 
@@ -94,17 +94,17 @@ public class TargetListAdapter implements ListAdapter {
 
 		holder.targetAddress.setText(targetList.get(position).getHostname());
 		holder.targetRtt.setText(String.valueOf(targetList.get(position)
-				.getRtt()));
-		holder.rttLight.setImageDrawable(getStatusImageDrawable((targetList.get(position))));
+				.getRttAvg()));
+		holder.rttLight.setImageDrawable(getStatusImageDrawable((targetList
+				.get(position))));
 
 		return convertView;
 
 	}
-
 	@Override
 	public int getViewTypeCount() {
 		// TODO Auto-generated method stub
-		return 0;
+		return MAX_TARGETS;
 	}
 
 	@Override
@@ -145,27 +145,40 @@ public class TargetListAdapter implements ListAdapter {
 		return false;
 	}
 
-	public Drawable getStatusImageDrawable(PingTarget p) {
+	private Drawable getStatusImageDrawable(PingTarget p) {
 		Drawable result;
 		switch (p.getStatus()) {
 
-		case GREEN:
-			result = context.getResources().getDrawable(R.drawable.rtt_green);
-			break;
-		case ORANGE:
-			result = context.getResources().getDrawable(R.drawable.rtt_orange);
-			break;
-		case RED:
-			result = context.getResources().getDrawable(R.drawable.rtt_red);
-			break;
-		case YELLOW:
-			result = context.getResources().getDrawable(R.drawable.rtt_yellow);
-			break;
-		default:
-			result = context.getResources().getDrawable(R.drawable.rtt_red);
-			break;
+			case GREEN :
+				result = context.getResources().getDrawable(
+						R.drawable.rtt_green);
+				break;
+			case ORANGE :
+				result = context.getResources().getDrawable(
+						R.drawable.rtt_orange);
+				break;
+			case RED :
+				result = context.getResources().getDrawable(R.drawable.rtt_red);
+				break;
+			case YELLOW :
+				result = context.getResources().getDrawable(
+						R.drawable.rtt_yellow);
+				break;
+			default :
+				result = context.getResources().getDrawable(R.drawable.rtt_red);
+				break;
 		}
 		return result;
 	}
 
+	public void addTarget(PingTarget in) {
+		// if (this.targetList.size() > MAX_TARGETS) {
+		// this.targetList.set(0, in);
+		// }
+		this.targetList.add(in);
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "Total scanned tragets" + targetList.size());
+		}
+		// notifyDataSetChanged();
+	}
 }

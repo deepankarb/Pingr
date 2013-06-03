@@ -20,7 +20,56 @@ public class PingTarget {
 	private InetAddress mAddress;
 	private String mHostname;
 	private STATUS mStatus;
-	private int mRtt; // or latency
+
+	private float mRttAvg; // in ms
+	private float mRttMin;
+	private float mRttMax;
+	private float mRttStdDev; // unused
+
+	/**
+	 * @return the mRttAvg
+	 */
+	public float getRttAvg() {
+		return mRttAvg;
+	}
+
+	/**
+	 * @param mRttAvg
+	 *            the mRttAvg to set
+	 */
+	public void setRttAvg(float mRttAvg) {
+		this.mRttAvg = mRttAvg;
+	}
+
+	/**
+	 * @return the mRttMin
+	 */
+	public float getRttMin() {
+		return mRttMin;
+	}
+
+	/**
+	 * @param mRttMin
+	 *            the mRttMin to set
+	 */
+	public void setRttMin(float mRttMin) {
+		this.mRttMin = mRttMin;
+	}
+
+	/**
+	 * @return the mRttMax
+	 */
+	public float getRttMax() {
+		return mRttMax;
+	}
+
+	/**
+	 * @param mRttMax
+	 *            the mRttMax to set
+	 */
+	public void setRttMax(float mRttMax) {
+		this.mRttMax = mRttMax;
+	}
 
 	/**
 	 * @return the mAddress
@@ -67,26 +116,9 @@ public class PingTarget {
 		this.mStatus = mStatus;
 	}
 
-	/**
-	 * @return the mRtt
-	 */
-	public int getRtt() {
-		return mRtt;
-	}
-
-	/**
-	 * @param mRtt
-	 *            the mRtt to set
-	 */
-	public void setRtt(int mRtt) {
-		this.mRtt = mRtt;
-	}
-
 	public PingTarget(String mHostname) {
 		super();
 		this.mHostname = mHostname;
 	}
-
-	
 
 }

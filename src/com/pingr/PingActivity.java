@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 public class PingActivity extends Activity implements OnClickListener {
 
@@ -16,6 +17,8 @@ public class PingActivity extends Activity implements OnClickListener {
 	private EditText targetEditText;
 	// private EditText resultEditText;
 	private InetAddress targetAddress;
+	private ListView targetListView;
+	private TargetListAdapter adapter;
 
 	/* ping timeout in ms */
 	private static int PING_TIMEOUT = 1000;
@@ -25,9 +28,13 @@ public class PingActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ping);
 
+		adapter = new TargetListAdapter(this, R.layout.list_target);
 		pingButton = (Button) findViewById(R.id.buttonPing);
 		pingButton.setOnClickListener(this);
 		targetEditText = (EditText) findViewById(R.id.editTextTarget);
+		targetListView = (ListView) findViewById(R.id.list_target);
+		targetListView.setAdapter(adapter);
+
 		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
 	}
@@ -44,7 +51,10 @@ public class PingActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 			case R.id.buttonPing :
-				PingTarget mTarget=	Pingr.pingAsyncTask(targetEditText.getText().toString().trim(), PING_TIMEOUT);
+				PingTarget mTarget = Pingr.pingAsyncTask(targetEditText
+						.getText().toString().trim(), PING_TIMEOUT);
+				adapter.addTarget(mTarget);
+				adapter.notifyDataSetChanged();
 				break;
 
 			default :

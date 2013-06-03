@@ -12,6 +12,9 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -95,17 +98,23 @@ public class Pingr {
 		return result;
 	}
 
-	public static class PingTask extends AsyncTask<PingTarget, Void, Void> {
+	private static class PingTask extends AsyncTask<PingTarget, Void, Void> {
 		PipedOutputStream mPOut;
 		PipedInputStream mPIn;
 		LineNumberReader mReader;
 		Process mProcess;
 		String pingCmd = "/system/bin/ping";
-		String pingCmdOpts = "-c10";
+		PingTarget target;
+		// Do not remove the -c (count) option
+		String[] pingCmdOpts = {"-c10", "-i0.1"};
 
-		// TextView mText = (TextView) findViewById(R.id.text);
+		List<String> commandLine = new ArrayList<String>();
+
+		private int exitValue;
+
 		@Override
 		protected void onPreExecute() {
+
 			mPOut = new PipedOutputStream();
 			try {
 				mPIn = new PipedInputStream(mPOut);
@@ -119,7 +128,6 @@ public class Pingr {
 			}
 
 		}
-
 		public void stop() {
 			Process p = mProcess;
 			if (p != null) {
@@ -130,9 +138,16 @@ public class Pingr {
 
 		@Override
 		protected Void doInBackground(PingTarget... params) {
+
+			target = params[0];
+
+			// construct the command line
+			commandLine.add(pingCmd);
+			commandLine.addAll(Arrays.asList(pingCmdOpts));
+			commandLine.add(target.getHostname());
+
 			try {
-				mProcess = new ProcessBuilder()
-						.command(pingCmd, pingCmdOpts, params[0].getHostname())
+				mProcess = new ProcessBuilder().command(commandLine)
 						.redirectErrorStream(true).start();
 
 				try {
@@ -151,9 +166,19 @@ public class Pingr {
 					in.close();
 					mPOut.close();
 					mPIn.close();
-				} finally {
+					exitValue = mProcess.exitValue();
+				} catch (IllegalStateException e) {
+					if (BuildConfig.DEBUG) {
+						e.printStackTrace();
+					}
 					mProcess.destroy();
 					mProcess = null;
+				} finally {
+					if (BuildConfig.DEBUG) {
+						Log.v(TAG,
+								"Ping terminated with : "
+										+ String.valueOf(exitValue));
+					}
 				}
 			} catch (IOException e) {
 				if (BuildConfig.DEBUG) {
@@ -162,41 +187,56 @@ public class Pingr {
 			}
 			return null;
 		}
-
 		@Override
 		protected void onProgressUpdate(Void... values) {
 			try {
-				// Is a line ready to read from the "ping" command?
+				// Is a line ready to read from the "ping" commandLine?
 				while (mReader.ready()) {
 					String readLine = mReader.readLine();
 					String minRtt;
 					String maxRtt;
 					String avgRtt;
-					// if (BuildConfig.DEBUG){
-					// Log.v(TAG, readLine);
-					// }
-					if (readLine.startsWith("rtt")) {
-						readLine = readLine
-								.substring(readLine.indexOf('='));
-						minRtt = readLine.substring(2,
-								readLine.indexOf('/')).trim();
-						avgRtt = readLine.substring(readLine.indexOf('/'));
-						avgRtt = avgRtt.substring(0,avgRtt.indexOf('/'));
-						if (BuildConfig.DEBUG) {							
-							Log.v(TAG, readLine + ":" + minRtt+":"+avgRtt);
-						}
+
+					if (BuildConfig.DEBUG) {
+						Log.v(TAG, readLine);
 					}
-					// This just displays the output, you should typically parse
-					// it I guess.
-					// mText.setText(mReader.readLine());
+
+					// Read result stats line 1
+					if (readLine.contains("packets transmitted")) {
+						// TODO
+					}
+
+					// Read result stats line 2
+					else if (readLine.startsWith("rtt")) {
+
+						// cut from '=' onwards for min/avg/max+
+						minRtt = readLine.substring(readLine.indexOf('='));
+						// cut from first '/' from above for avg/max+
+						avgRtt = minRtt.substring(minRtt.indexOf('/'));
+						// repeat above step for max+
+						maxRtt = avgRtt.substring(avgRtt.indexOf('/', 1));
+						// extract avg from avg/max+
+						avgRtt = avgRtt.substring(1, avgRtt.indexOf('/', 1));
+						// extract max from max+
+						maxRtt = maxRtt.substring(1, maxRtt.indexOf('/', 1));
+						// extract min from min/avg/max+
+						minRtt = minRtt.substring(2, minRtt.indexOf('/'));
+
+						if (BuildConfig.DEBUG) {
+							Log.v(TAG, "min= " + minRtt + " avg= " + avgRtt
+									+ " max= " + maxRtt);
+						}
+
+						target.setRttAvg(Float.valueOf(avgRtt));
+						target.setRttMin(Float.valueOf(minRtt));
+						target.setRttMax(Float.valueOf(maxRtt));
+					}
 				}
 			} catch (IOException t) {
 				if (BuildConfig.DEBUG) {
 					t.printStackTrace();
 				}
-
 			}
-		}
-	}
-
+		} // end onProgressUpdate
+	} // End async task
 }

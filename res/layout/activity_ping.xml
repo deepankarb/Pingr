@@ -26,9 +26,10 @@
 		android:layout_marginTop="16dip"
 		android:text="@string/ping_en" />
 	<ListView
-		android:id="@+id/listView1"
+		android:id="@+id/list_target"
 		android:layout_width="match_parent"
 		android:layout_height="0dip"
-		android:layout_weight="1" >
+		android:layout_weight="1"
+		android:cacheColorHint="#00000000" >
 	</ListView>
 </LinearLayout>
