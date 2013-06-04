@@ -39,6 +39,7 @@ public class PingTarget {
 	 */
 	public void setRttAvg(float mRttAvg) {
 		this.mRttAvg = mRttAvg;
+		this.mStatus = mRttAvg > 1000 ? STATUS.ORANGE : STATUS.GREEN;
 	}
 
 	/**
@@ -108,17 +109,19 @@ public class PingTarget {
 		return mStatus;
 	}
 
-	/**
-	 * @param mStatus
-	 *            the mStatus to set
-	 */
-	public void setStatus(STATUS mStatus) {
-		this.mStatus = mStatus;
-	}
-
 	public PingTarget(String mHostname) {
 		super();
 		this.mHostname = mHostname;
+		this.mStatus = STATUS.RED;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		PingTarget in = (PingTarget) o;
+		if (this.getHostname() == in.getHostname()) {
+			return true;
+
+		} else
+			return false;
+	}
 }

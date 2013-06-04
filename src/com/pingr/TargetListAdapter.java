@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +27,17 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		this.context = context;
 		this.targetList = new ArrayList<PingTarget>();
 	}
+	
+	
+	
+	public TargetListAdapter(Context context, int textViewResourceId,
+			List<PingTarget> objects) {
+		super(context, textViewResourceId, objects);
+		this.context = context;
+		this.targetList = objects;
+	}
+
+
 
 	private static final int MAX_TARGETS = 10;
 	private List<PingTarget> targetList;
@@ -59,23 +69,12 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 	}
 
 	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getItemViewType(int position) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		ViewHolder holder;
 		LayoutInflater mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		String targetRttText = new String();
 
 		if (convertView == null) {
 			convertView = mInflater
@@ -91,10 +90,13 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
+		
+		targetRttText = targetList.get(position)
+				.getRttAvg()==0.0f?"Not reachable":String.valueOf(targetList.get(position)
+				.getRttAvg());
 
 		holder.targetAddress.setText(targetList.get(position).getHostname());
-		holder.targetRtt.setText(String.valueOf(targetList.get(position)
-				.getRttAvg()));
+		holder.targetRtt.setText(targetRttText);
 		holder.rttLight.setImageDrawable(getStatusImageDrawable((targetList
 				.get(position))));
 
@@ -121,32 +123,9 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 			return false;
 	}
 
-	@Override
-	public void registerDataSetObserver(DataSetObserver observer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void unregisterDataSetObserver(DataSetObserver observer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean areAllItemsEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled(int arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	private Drawable getStatusImageDrawable(PingTarget p) {
 		Drawable result;
+		if (p.getStatus() == null) return context.getResources().getDrawable(R.drawable.rtt_red);
 		switch (p.getStatus()) {
 
 			case GREEN :
@@ -172,13 +151,32 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 	}
 
 	public void addTarget(PingTarget in) {
-		// if (this.targetList.size() > MAX_TARGETS) {
-		// this.targetList.set(0, in);
-		// }
-		this.targetList.add(in);
+
+		// let's assume this is a new target
+		boolean newItem = true;
+		
+		// now look for it in the list
+		for (PingTarget p: targetList)
+		{
+			// and if already present in the list
+			if (p.getHostname().trim().equals(in.getHostname().trim())){
+				p = in;
+				notifyDataSetChanged();
+				// it's not new anymore
+				newItem = false;
+			}
+		}	
+
+		// if not found in the list
+		if (newItem){
+			// add it
+			this.targetList.add(in);	
+		}			
+		
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "Total scanned tragets" + targetList.size());
+			Log.d(TAG, "Total scanned tragets : " + targetList.size());
 		}
-		// notifyDataSetChanged();
+		
+		notifyDataSetChanged();
 	}
 }

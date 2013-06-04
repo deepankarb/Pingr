@@ -167,7 +167,7 @@ public class Pingr {
 					mPOut.close();
 					mPIn.close();
 					exitValue = mProcess.exitValue();
-				} catch (IllegalStateException e) {
+				} catch (IllegalThreadStateException e) {
 					if (BuildConfig.DEBUG) {
 						e.printStackTrace();
 					}
@@ -230,6 +230,7 @@ public class Pingr {
 						target.setRttAvg(Float.valueOf(avgRtt));
 						target.setRttMin(Float.valueOf(minRtt));
 						target.setRttMax(Float.valueOf(maxRtt));
+						PingActivity.adapter.notifyDataSetChanged();
 					}
 				}
 			} catch (IOException t) {

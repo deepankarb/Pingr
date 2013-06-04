@@ -1,6 +1,7 @@
 package com.pingr;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,17 +19,22 @@ public class PingActivity extends Activity implements OnClickListener {
 	// private EditText resultEditText;
 	private InetAddress targetAddress;
 	private ListView targetListView;
-	private TargetListAdapter adapter;
+	public static TargetListAdapter adapter;
 
 	/* ping timeout in ms */
 	private static int PING_TIMEOUT = 1000;
+	private static ArrayList<PingTarget> targetList = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ping);
 
-		adapter = new TargetListAdapter(this, R.layout.list_target);
+		if (targetList == null) {
+			targetList = new ArrayList<PingTarget>();
+		}
+		
+		adapter = new TargetListAdapter(this, R.layout.list_target, targetList);
 		pingButton = (Button) findViewById(R.id.buttonPing);
 		pingButton.setOnClickListener(this);
 		targetEditText = (EditText) findViewById(R.id.editTextTarget);
@@ -53,8 +59,7 @@ public class PingActivity extends Activity implements OnClickListener {
 			case R.id.buttonPing :
 				PingTarget mTarget = Pingr.pingAsyncTask(targetEditText
 						.getText().toString().trim(), PING_TIMEOUT);
-				adapter.addTarget(mTarget);
-				adapter.notifyDataSetChanged();
+				adapter.addTarget(mTarget);				
 				break;
 
 			default :
