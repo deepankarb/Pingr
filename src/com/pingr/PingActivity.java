@@ -4,8 +4,12 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,7 +27,9 @@ public class PingActivity extends Activity implements OnClickListener {
 
 	/* ping timeout in ms */
 	private static int PING_TIMEOUT = 1000;
+	public static int greenThreshold, orangeThreshold, redThreshold;
 	private static ArrayList<PingTarget> targetList = null;
+	private SharedPreferences sharedPref;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +39,7 @@ public class PingActivity extends Activity implements OnClickListener {
 		if (targetList == null) {
 			targetList = new ArrayList<PingTarget>();
 		}
-		
+
 		adapter = new TargetListAdapter(this, R.layout.list_target, targetList);
 		pingButton = (Button) findViewById(R.id.buttonPing);
 		pingButton.setOnClickListener(this);
@@ -44,6 +50,16 @@ public class PingActivity extends Activity implements OnClickListener {
 		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
 	}
+	
+	@Override
+	protected void onResume() {	
+		super.onResume();
+		// read settings
+		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		greenThreshold = Integer.valueOf(sharedPref.getString(getString(R.string.pref_key_green), "200"));
+		orangeThreshold = Integer.valueOf(sharedPref.getString(getString(R.string.pref_key_orange), "700"));
+		redThreshold = Integer.valueOf(sharedPref.getString(getString(R.string.pref_key_red), "2000"));
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -53,17 +69,30 @@ public class PingActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
 	public void onClick(View v) {
 
 		switch (v.getId()) {
-			case R.id.buttonPing :
-				PingTarget mTarget = Pingr.pingAsyncTask(targetEditText
-						.getText().toString().trim(), PING_TIMEOUT);
-				adapter.addTarget(mTarget);				
-				break;
+		case R.id.buttonPing:
+			PingTarget mTarget = Pingr.pingAsyncTask(targetEditText.getText()
+					.toString().trim(), PING_TIMEOUT);
+			adapter.addTarget(mTarget);
+			break;
 
-			default :
-				break;
+		default:
+			break;
 		}
 	}
 }

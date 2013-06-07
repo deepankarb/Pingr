@@ -22,10 +22,14 @@ import android.widget.TextView;
  */
 public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 
+	LayoutInflater mInflater;
+	
 	public TargetListAdapter(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
 		this.context = context;
 		this.targetList = new ArrayList<PingTarget>();
+		mInflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	
@@ -35,6 +39,8 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		super(context, textViewResourceId, objects);
 		this.context = context;
 		this.targetList = objects;
+		mInflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 
@@ -72,8 +78,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		ViewHolder holder;
-		LayoutInflater mInflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
 		String targetRttText = new String();
 
 		if (convertView == null) {
@@ -160,7 +165,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		{
 			// and if already present in the list
 			if (p.getHostname().trim().equals(in.getHostname().trim())){
-				p = in;
+				p = in; // replace it
 				notifyDataSetChanged();
 				// it's not new anymore
 				newItem = false;
@@ -170,13 +175,14 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		// if not found in the list
 		if (newItem){
 			// add it
-			this.targetList.add(in);	
+			this.targetList.add(in);
+			notifyDataSetChanged();
 		}			
 		
 		if (BuildConfig.DEBUG) {
 			Log.d(TAG, "Total scanned tragets : " + targetList.size());
 		}
 		
-		notifyDataSetChanged();
+		
 	}
 }

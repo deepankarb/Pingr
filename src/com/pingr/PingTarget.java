@@ -5,6 +5,8 @@ package com.pingr;
 
 import java.net.InetAddress;
 
+import android.content.SharedPreferences;
+
 /**
  * Ping target info
  * 
@@ -14,7 +16,7 @@ import java.net.InetAddress;
 public class PingTarget {
 
 	public static enum STATUS {
-		GREEN, YELLOW, ORANGE, RED
+		GREEN, YELLOW, ORANGE, RED, PING_IN_PROGRESS
 	};
 
 	private InetAddress mAddress;
@@ -38,8 +40,16 @@ public class PingTarget {
 	 *            the mRttAvg to set
 	 */
 	public void setRttAvg(float mRttAvg) {
-		this.mRttAvg = mRttAvg;
-		this.mStatus = mRttAvg > 1000 ? STATUS.ORANGE : STATUS.GREEN;
+		this.mRttAvg = mRttAvg;		
+		if (this.mRttAvg < (float)PingActivity.greenThreshold){
+			this.mStatus = STATUS.GREEN;
+		}
+		else if (this.mRttAvg < (float)PingActivity.orangeThreshold){
+			this.mStatus = STATUS.ORANGE;
+		}
+		else {
+			this.mStatus = STATUS.RED;
+		}
 	}
 
 	/**
@@ -112,7 +122,7 @@ public class PingTarget {
 	public PingTarget(String mHostname) {
 		super();
 		this.mHostname = mHostname;
-		this.mStatus = STATUS.RED;
+		this.mStatus = STATUS.PING_IN_PROGRESS;
 	}
 
 	@Override
