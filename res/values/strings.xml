@@ -6,4 +6,7 @@
 	<string name="ping_en">Ping</string>
 	<string name="target_en">target</string>
 	<string name="good_rtt_en">Good rtt</string>
+	<string name="pref_key_green">pref_key_green</string>
+	<string name="pref_key_orange">pref_key_orange</string>
+	<string name="pref_key_red">pref_key_red</string>
 </resources>
