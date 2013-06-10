@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="pref_key_rtt_settings"
+        android:title="Response time" >
+        <EditTextPreference
+            android:key="@string/pref_key_green"
+            android:title="Green threshold"
+            android:defaultValue="200" >
+        </EditTextPreference>
+        <EditTextPreference
+            android:key="@string/pref_key_orange"
+            android:title="Orange threshold"
+            android:defaultValue="700" >
+        </EditTextPreference>
+        <EditTextPreference
+            android:key="@string/pref_key_red"
+            android:title="Red threshold"
+            android:defaultValue="2000"
+             >
+        </EditTextPreference>
+    </PreferenceCategory>
+
+</PreferenceScreen>
