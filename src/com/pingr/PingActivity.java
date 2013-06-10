@@ -22,14 +22,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 public class PingActivity extends Activity implements OnClickListener {
 
-	private Button pingButton;
-	private EditText targetEditText;
+	public static Button pingButton;
+	private static EditText targetEditText;
 	// private EditText resultEditText;
 	private InetAddress targetAddress;
 	private ListView targetListView;
@@ -60,15 +61,18 @@ public class PingActivity extends Activity implements OnClickListener {
 		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
 	}
-	
+
 	@Override
-	protected void onResume() {	
+	protected void onResume() {
 		super.onResume();
 		// read settings
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		greenThreshold = Integer.valueOf(sharedPref.getString(getString(R.string.pref_key_green), "200"));
-		orangeThreshold = Integer.valueOf(sharedPref.getString(getString(R.string.pref_key_orange), "700"));
-		redThreshold = Integer.valueOf(sharedPref.getString(getString(R.string.pref_key_red), "2000"));
+		greenThreshold = Integer.valueOf(sharedPref.getString(
+				getString(R.string.pref_key_green), "200"));
+		orangeThreshold = Integer.valueOf(sharedPref.getString(
+				getString(R.string.pref_key_orange), "700"));
+		redThreshold = Integer.valueOf(sharedPref.getString(
+				getString(R.string.pref_key_red), "2000"));
 	}
 
 	@Override
@@ -96,6 +100,9 @@ public class PingActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 		case R.id.buttonPing:
+			InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(),
+					0);
 			PingTarget mTarget = Pingr.pingAsyncTask(targetEditText.getText()
 					.toString().trim(), PING_TIMEOUT);
 			adapter.addTarget(mTarget);

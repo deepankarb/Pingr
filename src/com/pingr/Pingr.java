@@ -121,9 +121,13 @@ public class Pingr {
 		List<String> commandLine = new ArrayList<String>();
 
 		private int exitValue;
+		private boolean statsAvailable = false;
 
 		@Override
 		protected void onPreExecute() {
+			
+			//disable ping button
+			PingActivity.pingButton.setActivated(false);
 
 			mPOut = new PipedOutputStream();
 			try {
@@ -218,6 +222,8 @@ public class Pingr {
 
 					// Read result stats line 2
 					else if (readLine.startsWith("rtt")) {
+						
+						statsAvailable  = true;
 
 						// cut from '=' onwards for min/avg/max+
 						minRtt = readLine.substring(readLine.indexOf('='));
@@ -249,5 +255,16 @@ public class Pingr {
 				}
 			}
 		} // end onProgressUpdate
+		
+		@Override
+		protected void onPostExecute(Void result) {	
+			super.onPostExecute(result);
+			
+			// if ping succeeded but stats weren't printed
+			if (!statsAvailable && exitValue ==0) target.setStatusUnkown();
+			
+			//enable button
+			PingActivity.pingButton.setActivated(true);
+		}
 	} // End async task
 }

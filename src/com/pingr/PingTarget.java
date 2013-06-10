@@ -26,7 +26,7 @@ import android.content.SharedPreferences;
 public class PingTarget {
 
 	public static enum STATUS {
-		GREEN, YELLOW, ORANGE, RED, PING_IN_PROGRESS
+		GREEN, YELLOW, ORANGE, RED, PING_IN_PROGRESS, UNKNOWN
 	};
 
 	private InetAddress mAddress;
@@ -38,6 +38,10 @@ public class PingTarget {
 	private float mRttMax;
 	private float mRttStdDev; // unused
 
+	
+	public void setStatusUnkown(){
+		this.mStatus = STATUS.UNKNOWN;
+	}
 	/**
 	 * @return the mRttAvg
 	 */

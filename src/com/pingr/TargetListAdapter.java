@@ -158,6 +158,9 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 				result = context.getResources().getDrawable(
 						R.drawable.rtt_yellow);
 				break;
+//			case UNKNOWN:
+//				result = context.getResources().getDrawable();
+//				break;
 			default :
 				result = context.getResources().getDrawable(R.drawable.rtt_red);
 				break;
