@@ -77,7 +77,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 
 	@Override
 	public PingTarget getItem(int arg0) {
-		if (arg0 > 0 && arg0 < targetList.size()) {
+		if (arg0 >= 0 && arg0 < targetList.size()) {
 			return targetList.get(arg0);
 		} else {
 			return null;
@@ -106,9 +106,22 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		targetRttText = targetList.get(position)
-				.getRttAvg()==0.0f?"Not reachable":String.valueOf(targetList.get(position)
-				.getRttAvg());
+		switch (targetList.get(position).getStatus()) {		
+		case UNKNOWN:
+			targetRttText = "Status unknown";
+			break;			
+		case PING_IN_PROGRESS:
+			targetRttText = "Pinging";
+			break;
+		case UNREACHABLE:
+			targetRttText = "Unreachable";
+		default:
+			targetRttText = targetList.get(position)
+			.getRttAvg()==0.0f?"Not reachable":String.valueOf(targetList.get(position)
+			.getRttAvg())+ " ms";
+			break;
+		}
+		
 
 		holder.targetAddress.setText(targetList.get(position).getHostname());
 		holder.targetRtt.setText(targetRttText);
@@ -126,9 +139,15 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 
 	@Override
 	public boolean hasStableIds() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
+	
+	@Override
+	public long getItemId(int position) {	
+		return position;
+	}
+	
+	
 
 	@Override
 	public boolean isEmpty() {

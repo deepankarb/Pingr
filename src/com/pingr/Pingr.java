@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.pingr.PingTarget.STATUS;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -102,10 +104,8 @@ public class Pingr {
 
 	}
 
-	public static PingTarget pingAsyncTask(String host, int timeout) {
-		PingTarget result = new PingTarget(host);
-		new PingTask().execute(result);
-		return result;
+	public static void pingAsyncTask(PingTarget p, int timeout) {
+		new PingTask().execute(p);
 	}
 
 	private static class PingTask extends AsyncTask<PingTarget, Void, Void> {
@@ -116,7 +116,7 @@ public class Pingr {
 		String pingCmd = "/system/bin/ping";
 		PingTarget target;
 		// Do not remove the -c (count) option
-		String[] pingCmdOpts = {"-c10", "-i0.1"};
+		String[] pingCmdOpts = { "-c10", "-i0.1" };
 
 		List<String> commandLine = new ArrayList<String>();
 
@@ -125,9 +125,9 @@ public class Pingr {
 
 		@Override
 		protected void onPreExecute() {
-			
-			//disable ping button
-			PingActivity.pingButton.setActivated(false);
+
+			// disable ping button
+			PingActivity.pingButton.setEnabled(false);
 
 			mPOut = new PipedOutputStream();
 			try {
@@ -142,6 +142,7 @@ public class Pingr {
 			}
 
 		}
+
 		public void stop() {
 			Process p = mProcess;
 			if (p != null) {
@@ -154,6 +155,8 @@ public class Pingr {
 		protected Void doInBackground(PingTarget... params) {
 
 			target = params[0];
+
+			//publishProgress();
 
 			// construct the command line
 			commandLine.add(pingCmd);
@@ -201,8 +204,10 @@ public class Pingr {
 			}
 			return null;
 		}
+
 		@Override
 		protected void onProgressUpdate(Void... values) {
+
 			try {
 				// Is a line ready to read from the "ping" commandLine?
 				while (mReader.ready()) {
@@ -222,8 +227,8 @@ public class Pingr {
 
 					// Read result stats line 2
 					else if (readLine.startsWith("rtt")) {
-						
-						statsAvailable  = true;
+
+						statsAvailable = true;
 
 						// cut from '=' onwards for min/avg/max+
 						minRtt = readLine.substring(readLine.indexOf('='));
@@ -248,23 +253,37 @@ public class Pingr {
 						target.setRttMax(Float.valueOf(maxRtt));
 						PingActivity.adapter.notifyDataSetChanged();
 					}
+
+					else {
+						target.setStatus(STATUS.PING_IN_PROGRESS);
+						PingActivity.adapter.notifyDataSetChanged();
+					}
 				}
+
 			} catch (IOException t) {
 				if (BuildConfig.DEBUG) {
 					t.printStackTrace();
 				}
 			}
 		} // end onProgressUpdate
-		
+
 		@Override
-		protected void onPostExecute(Void result) {	
+		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			
+
 			// if ping succeeded but stats weren't printed
-			if (!statsAvailable && exitValue ==0) target.setStatusUnkown();
-			
-			//enable button
-			PingActivity.pingButton.setActivated(true);
+			if (!statsAvailable && exitValue == 0) {
+				target.setStatus(STATUS.UNKNOWN);
+				PingActivity.adapter.notifyDataSetChanged();
+			}
+
+			if (exitValue != 0) {
+				target.setStatus(STATUS.UNREACHABLE);
+				PingActivity.adapter.notifyDataSetChanged();
+			}
+
+			// enable button
+			PingActivity.pingButton.setEnabled(true);
 		}
 	} // End async task
 }

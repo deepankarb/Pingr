@@ -14,21 +14,28 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class PingActivity extends Activity implements OnClickListener {
+public class PingActivity extends Activity implements OnClickListener,
+		OnItemClickListener, OnItemLongClickListener {
 
+	private static final String TAG = "PingActivity";
 	public static Button pingButton;
 	private static EditText targetEditText;
 	// private EditText resultEditText;
@@ -56,6 +63,8 @@ public class PingActivity extends Activity implements OnClickListener {
 		pingButton.setOnClickListener(this);
 		targetEditText = (EditText) findViewById(R.id.editTextTarget);
 		targetListView = (ListView) findViewById(R.id.list_target);
+		targetListView.setOnItemClickListener(this);
+		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
 
 		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
@@ -100,16 +109,38 @@ public class PingActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 		case R.id.buttonPing:
-			InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(),
-					0);
-			PingTarget mTarget = Pingr.pingAsyncTask(targetEditText.getText()
-					.toString().trim(), PING_TIMEOUT);
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(), 0);
+
+			PingTarget mTarget = new PingTarget(targetEditText.getText()
+					.toString().toLowerCase().trim());
+			Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
 			adapter.addTarget(mTarget);
 			break;
 
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, parent.toString() + " " + view.toString() + " "
+					+ position + " " + id);
+		}
+		PingTarget p = (PingTarget) parent.getItemAtPosition(position);
+		if (BuildConfig.DEBUG){
+			Log.d(TAG, p.getHostname());
+		}
+		Pingr.pingAsyncTask(p, PING_TIMEOUT);
 	}
 }

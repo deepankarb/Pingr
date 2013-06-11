@@ -15,8 +15,6 @@ package com.pingr;
 
 import java.net.InetAddress;
 
-import android.content.SharedPreferences;
-
 /**
  * Ping target info
  * 
@@ -26,7 +24,7 @@ import android.content.SharedPreferences;
 public class PingTarget {
 
 	public static enum STATUS {
-		GREEN, YELLOW, ORANGE, RED, PING_IN_PROGRESS, UNKNOWN
+		GREEN, YELLOW, ORANGE, RED, PING_IN_PROGRESS, UNKNOWN, UNREACHABLE;
 	};
 
 	private InetAddress mAddress;
@@ -38,9 +36,8 @@ public class PingTarget {
 	private float mRttMax;
 	private float mRttStdDev; // unused
 
-	
-	public void setStatusUnkown(){
-		this.mStatus = STATUS.UNKNOWN;
+	public void setStatus(STATUS s){
+		this.mStatus = s;
 	}
 	/**
 	 * @return the mRttAvg
