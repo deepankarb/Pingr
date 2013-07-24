@@ -57,6 +57,15 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 
 	private static final int MAX_TARGETS = 10;
 	private List<PingTarget> targetList;
+	/**
+	 * @return the targetList
+	 */
+	public List<PingTarget> getTargetList() {
+		return targetList;
+	}
+
+
+
 	private Context context;
 	private static final String TAG = "TargetListAdapter";
 

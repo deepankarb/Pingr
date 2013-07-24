@@ -1,17 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package com.pingr;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.util.ArrayList;
+
+import com.pingr.PingTarget.STATUS;
 
 import android.app.Activity;
 import android.content.Context;
@@ -49,6 +49,12 @@ public class PingActivity extends Activity implements OnClickListener,
 	private static ArrayList<PingTarget> targetList = null;
 	private SharedPreferences sharedPref;
 
+	private static String LIST_FILENAME = "pingr_target_list";
+	private File listFile;
+	private FileOutputStream fos;
+	private byte[] byte_buffer;
+	private StringBuilder list_buffer;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,8 +73,35 @@ public class PingActivity extends Activity implements OnClickListener,
 		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
 
+		loadListFromCache();
+
 		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
+	}
+
+	@Override
+	protected void onPause() {
+
+		super.onPause();
+		saveListToCache();
+	}
+
+	private void saveListToCache() {
+
+		// open a file in cache dir
+		listFile = new File(getCacheDir(), LIST_FILENAME);
+
+		// write hostnames to the file
+		try {
+			fos = new FileOutputStream(listFile);
+			PrintWriter pw = new PrintWriter(fos);
+			for (PingTarget pt : adapter.getTargetList()) {
+				pw.println(pt.getHostname());
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -82,6 +115,32 @@ public class PingActivity extends Activity implements OnClickListener,
 				getString(R.string.pref_key_orange), "700"));
 		redThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_red), "2000"));
+	}
+
+	private void loadListFromCache() {
+		// read list from cache
+		listFile = new File(getCacheDir(), LIST_FILENAME);
+		String line = new String();
+		try {
+			FileInputStream fis = new FileInputStream(listFile);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+			while ((line = br.readLine()) != null) {
+				if (BuildConfig.DEBUG) {
+					Log.d(TAG, "adding " + line + " t0 list");
+				}				
+				adapter.add(new PingTarget(line, adapter));
+			}
+
+			br.close();
+			fis.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	@Override
@@ -108,13 +167,16 @@ public class PingActivity extends Activity implements OnClickListener,
 	public void onClick(View v) {
 
 		switch (v.getId()) {
+
 		case R.id.buttonPing:
+
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(), 0);
 
 			PingTarget mTarget = new PingTarget(targetEditText.getText()
-					.toString().toLowerCase().trim());
-			Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
+					.toString().toLowerCase().trim(), adapter);
+			// Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
+			mTarget.ping();
 			adapter.addTarget(mTarget);
 			break;
 
@@ -137,10 +199,15 @@ public class PingActivity extends Activity implements OnClickListener,
 			Log.d(TAG, parent.toString() + " " + view.toString() + " "
 					+ position + " " + id);
 		}
+
 		PingTarget p = (PingTarget) parent.getItemAtPosition(position);
-		if (BuildConfig.DEBUG){
+
+		if (BuildConfig.DEBUG) {
 			Log.d(TAG, p.getHostname());
 		}
-		Pingr.pingAsyncTask(p, PING_TIMEOUT);
+
+		if (p.getStatus() != STATUS.PING_IN_PROGRESS)
+			// Pingr.pingAsyncTask(p, PING_TIMEOUT);
+			p.ping();
 	}
 }
