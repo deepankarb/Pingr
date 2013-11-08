@@ -1,17 +1,16 @@
-/*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package com.pingr;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.pingr.PingTarget.STATUS;
+
 public class PingActivity extends Activity implements OnClickListener,
 		OnItemClickListener, OnItemLongClickListener {
 
@@ -45,9 +46,14 @@ public class PingActivity extends Activity implements OnClickListener,
 
 	/* ping timeout in ms */
 	private static int PING_TIMEOUT = 1000;
-	public static int greenThreshold, orangeThreshold, redThreshold;
-	private static ArrayList<PingTarget> targetList = null;
+	private static List<PingTarget> targetList = null;
 	private SharedPreferences sharedPref;
+
+	private static String LIST_FILENAME = "pingr_target_list";
+	private File listFile;
+	private FileOutputStream fos;
+	private byte[] byte_buffer;
+	private StringBuilder list_buffer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +73,35 @@ public class PingActivity extends Activity implements OnClickListener,
 		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
 
+		loadListFromCache();
+
 		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
+	}
+
+	@Override
+	protected void onPause() {
+
+		super.onPause();
+		saveListToCache();
+	}
+
+	private void saveListToCache() {
+
+		// open a file in cache dir
+		listFile = new File(getCacheDir(), LIST_FILENAME);
+
+		// write hostnames to the file
+		try {
+			fos = new FileOutputStream(listFile);
+			PrintWriter pw = new PrintWriter(fos);
+			for (PingTarget pt : adapter.getTargetList()) {
+				pw.println(pt.getHostname());
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -76,12 +109,38 @@ public class PingActivity extends Activity implements OnClickListener,
 		super.onResume();
 		// read settings
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		greenThreshold = Integer.valueOf(sharedPref.getString(
+		PingrApplication.greenThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_green), "200"));
-		orangeThreshold = Integer.valueOf(sharedPref.getString(
+		PingrApplication.orangeThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_orange), "700"));
-		redThreshold = Integer.valueOf(sharedPref.getString(
+		PingrApplication.redThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_red), "2000"));
+	}
+
+	private void loadListFromCache() {
+		// read list from cache
+		listFile = new File(getCacheDir(), LIST_FILENAME);
+		String readHostname = new String();
+		try {
+			FileInputStream fis = new FileInputStream(listFile);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+			while ((readHostname = br.readLine()) != null) {
+				if (BuildConfig.DEBUG) {
+					Log.d(TAG, "adding " + readHostname + " t0 list");
+				}				
+				adapter.add(new PingTarget(readHostname));
+			}
+
+			br.close();
+			fis.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	@Override
@@ -108,14 +167,19 @@ public class PingActivity extends Activity implements OnClickListener,
 	public void onClick(View v) {
 
 		switch (v.getId()) {
+
 		case R.id.buttonPing:
+
+			// hide keyboard
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(), 0);
 
 			PingTarget mTarget = new PingTarget(targetEditText.getText()
 					.toString().toLowerCase().trim());
-			Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
 			adapter.addTarget(mTarget);
+			// Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
+			mTarget.ping();
+			
 			break;
 
 		default:
@@ -124,10 +188,10 @@ public class PingActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		
+		return true;
 	}
 
 	@Override
@@ -137,10 +201,15 @@ public class PingActivity extends Activity implements OnClickListener,
 			Log.d(TAG, parent.toString() + " " + view.toString() + " "
 					+ position + " " + id);
 		}
+
 		PingTarget p = (PingTarget) parent.getItemAtPosition(position);
-		if (BuildConfig.DEBUG){
+
+		if (BuildConfig.DEBUG) {
 			Log.d(TAG, p.getHostname());
 		}
-		Pingr.pingAsyncTask(p, PING_TIMEOUT);
+
+		if (p.getStatus() != STATUS.PING_IN_PROGRESS)
+			// Pingr.pingAsyncTask(p, PING_TIMEOUT);
+			p.ping();
 	}
 }

@@ -1,13 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+
 /**
  * 
  */
@@ -30,7 +21,7 @@ import android.widget.TextView;
  * @author bharddee
  * 
  */
-public class TargetListAdapter extends ArrayAdapter<PingTarget> {
+public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingTargetStatusChangeListener {
 
 	LayoutInflater mInflater;
 	
@@ -57,6 +48,15 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 
 	private static final int MAX_TARGETS = 10;
 	private List<PingTarget> targetList;
+	/**
+	 * @return the targetList
+	 */
+	public List<PingTarget> getTargetList() {
+		return targetList;
+	}
+
+
+
 	private Context context;
 	private static final String TAG = "TargetListAdapter";
 
@@ -121,8 +121,8 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 			.getRttAvg())+ " ms";
 			break;
 		}
-		
 
+		targetList.get(position).setStatusChangeListener(this);
 		holder.targetAddress.setText(targetList.get(position).getHostname());
 		holder.targetRtt.setText(targetRttText);
 		holder.rttLight.setImageDrawable(getStatusImageDrawable((targetList
@@ -205,7 +205,8 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		}	
 
 		// if not found in the list
-		if (newItem){
+		if (newItem){			
+			
 			// add it
 			this.targetList.add(in);
 			notifyDataSetChanged();
@@ -213,8 +214,12 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		
 		if (BuildConfig.DEBUG) {
 			Log.d(TAG, "Total scanned tragets : " + targetList.size());
-		}
+		}		
 		
-		
+	}
+
+	@Override
+	public void onTargetStatusChange() {
+		notifyDataSetChanged();
 	}
 }
