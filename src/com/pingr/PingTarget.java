@@ -17,11 +17,8 @@ import java.util.List;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 /**
- * Ping target info
- * 
  * @author bharddee
  * 
  */
@@ -33,19 +30,99 @@ public class PingTarget {
 
 	public static final String TAG = "PingTarget";
 
-	private InetAddress mAddress;
+	private InetAddress mAddress; // Target address
 	private String mHostname;
+	private int mPort; // Target port
 	private STATUS mStatus;
 
 	private float mRttAvg; // in ms
 	private float mRttMin;
 	private float mRttMax;
 	private float mRttStdDev; // unused
+	private PingTargetStatusChangeListener mStatusChangeListener;
 
-	private ArrayAdapter<PingTarget> mAdapter;
+	public PingTarget(String mHostname) {
+		super();
 
-	public void setStatus(STATUS s) {
-		this.mStatus = s;
+		this.mHostname = mHostname;
+		this.mStatusChangeListener = null;
+		this.mStatus = STATUS.UNKNOWN;
+	}
+
+	public PingTarget(String hostname, int port) {
+		this(hostname);
+		this.mPort = port;
+	}
+
+	/**
+	 * @param mStatusChangeListener
+	 *            the mStatusChangeListener to set
+	 */
+	public void setStatusChangeListener(
+			PingTargetStatusChangeListener mStatusChangeListener) {
+		this.mStatusChangeListener = mStatusChangeListener;
+	}
+
+
+
+	/**
+	 * @return the mAddress
+	 */
+	public InetAddress getAddress() {
+		return mAddress;
+	}
+
+	/**
+	 * @param mAddress
+	 *            the mAddress to set
+	 */
+	public void setAddress(InetAddress mAddress) {
+		this.mAddress = mAddress;
+	}
+
+	/**
+	 * @return the mHostname
+	 */
+	public String getHostname() {
+		return mHostname;
+	}
+
+	/**
+	 * @param mHostname
+	 *            the mHostname to set
+	 */
+	public void setHostname(String mHostname) {
+		this.mHostname = mHostname;
+	}
+
+	/**
+	 * @return the mPort
+	 */
+	public int getPort() {
+		return mPort;
+	}
+
+	/**
+	 * @param mPort
+	 *            the mPort to set
+	 */
+	public void setPort(int mPort) {
+		this.mPort = mPort;
+	}
+
+	/**
+	 * @return the mStatus
+	 */
+	public STATUS getStatus() {
+		return mStatus;
+	}
+
+	/**
+	 * @param mStatus
+	 *            the mStatus to set
+	 */
+	public void setStatus(STATUS mStatus) {
+		this.mStatus = mStatus;
 	}
 
 	/**
@@ -61,12 +138,18 @@ public class PingTarget {
 	 */
 	public void setRttAvg(float mRttAvg) {
 		this.mRttAvg = mRttAvg;
-		if (this.mRttAvg < (float) PingActivity.greenThreshold) {
+		if (this.mRttAvg < (float) PingrApplication.greenThreshold) {
 			this.mStatus = STATUS.GREEN;
-		} else if (this.mRttAvg < (float) PingActivity.orangeThreshold) {
+			if (mStatusChangeListener != null)
+				mStatusChangeListener.onTargetStatusChange();
+		} else if (this.mRttAvg < (float) PingrApplication.orangeThreshold) {
 			this.mStatus = STATUS.ORANGE;
+			if (mStatusChangeListener != null)
+				mStatusChangeListener.onTargetStatusChange();
 		} else {
 			this.mStatus = STATUS.RED;
+			if (mStatusChangeListener != null)
+				mStatusChangeListener.onTargetStatusChange();
 		}
 	}
 
@@ -101,63 +184,18 @@ public class PingTarget {
 	}
 
 	/**
-	 * @return the mAddress
+	 * @return the mRttStdDev
 	 */
-	public InetAddress getAddress() {
-		return mAddress;
+	public float getRttStdDev() {
+		return mRttStdDev;
 	}
 
 	/**
-	 * @param mAddress
-	 *            the mAddress to set private
+	 * @param mRttStdDev
+	 *            the mRttStdDev to set
 	 */
-	public void setAddress(InetAddress mAddress) {
-		this.mAddress = mAddress;
-	}
-
-	/**
-	 * @return the mHostname
-	 */
-	public String getHostname() {
-		return mHostname;
-	}
-
-	/**
-	 * @param mHostname
-	 *            the mHostname to set
-	 */
-	public void setHostname(String mHostname) {
-		this.mHostname = mHostname;
-	}
-
-	/**
-	 * @return the mStatus
-	 */
-	public STATUS getStatus() {
-		return mStatus;
-	}
-
-	// public PingTarget(String mHostname) {
-	// super();
-	// this.mHostname = mHostname;
-	// this.mStatus = STATUS.PING_IN_PROGRESS;
-	// }
-
-	public PingTarget(String mHostname, ArrayAdapter<PingTarget> adapter) {
-		super();
-		this.mHostname = mHostname;
-		this.mStatus = STATUS.UNKNOWN;
-		this.mAdapter = adapter;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		PingTarget in = (PingTarget) o;
-		if (this.getHostname() == in.getHostname()) {
-			return true;
-
-		} else
-			return false;
+	public void setRttStdDev(float mRttStdDev) {
+		this.mRttStdDev = mRttStdDev;
 	}
 
 	public boolean ping() {
@@ -187,10 +225,6 @@ public class PingTarget {
 
 		@Override
 		protected void onPreExecute() {
-
-			// disable ping button
-			if (PingActivity.pingButton.isEnabled())
-				PingActivity.pingButton.setEnabled(false);
 
 			mPOut = new PipedOutputStream();
 			try {
@@ -253,7 +287,7 @@ public class PingTarget {
 				} finally {
 					if (BuildConfig.DEBUG) {
 						Log.v(TAG + ": " + this.toString(),
-								"Ping terminated with : "
+								"PingTarget terminated with : "
 										+ String.valueOf(exitValue));
 					}
 				}
@@ -319,24 +353,24 @@ public class PingTarget {
 						mRttMax = Float.valueOf(maxRtt);
 						// PingActivity.adapter.notifyDataSetChanged();
 
-						if (mRttAvg < (float) PingActivity.greenThreshold) {
+						if (mRttAvg < (float) PingrApplication.greenThreshold) {
 							mStatus = STATUS.GREEN;
-						} else if (mRttAvg < (float) PingActivity.orangeThreshold) {
+							if (mStatusChangeListener != null)
+								mStatusChangeListener.onTargetStatusChange();
+
+						} else if (mRttAvg < (float) PingrApplication.orangeThreshold) {
 							mStatus = STATUS.ORANGE;
+							if (mStatusChangeListener != null)
+								mStatusChangeListener.onTargetStatusChange();
 						} else {
 							mStatus = STATUS.RED;
+							if (mStatusChangeListener != null)
+								mStatusChangeListener.onTargetStatusChange();
 						}
-
-						if (mAdapter != null)
-							mAdapter.notifyDataSetChanged();
 					}
 
 					else {
-						// setStatus(STATUS.PING_IN_PROGRESS);
 						mStatus = STATUS.PING_IN_PROGRESS;
-						// PingActivity.adapter.notifyDataSetChanged();
-						if (mAdapter != null)
-							mAdapter.notifyDataSetChanged();
 					}
 				}
 
@@ -356,22 +390,17 @@ public class PingTarget {
 			if (!statsAvailable && exitValue == 0) {
 				// setStatus(STATUS.UNKNOWN);
 				mStatus = STATUS.UNKNOWN;
-				// PingActivity.adapter.notifyDataSetChanged();
-				if (mAdapter != null)
-					mAdapter.notifyDataSetChanged();
+				if (mStatusChangeListener != null)
+					mStatusChangeListener.onTargetStatusChange();
 			}
 
 			if (exitValue != 0) {
 				// setStatus(STATUS.UNREACHABLE);
 				mStatus = STATUS.UNREACHABLE;
-				// PingActivity.adapter.notifyDataSetChanged();
-				if (mAdapter != null)
-					mAdapter.notifyDataSetChanged();
-			}
+				if (mStatusChangeListener != null)
+					mStatusChangeListener.onTargetStatusChange();
 
-			// enable button
-			if (!PingActivity.pingButton.isEnabled())
-				PingActivity.pingButton.setEnabled(true);
+			}
 		}
 
 	} // End async task

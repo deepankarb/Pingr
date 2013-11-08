@@ -17,6 +17,10 @@ public class PingrApplication extends Application {
 		return instance;
 	}
 
+	public static int greenThreshold;
+	public static int orangeThreshold;
+	public static int redThreshold;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();

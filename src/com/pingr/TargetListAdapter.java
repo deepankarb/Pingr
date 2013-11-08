@@ -21,7 +21,7 @@ import android.widget.TextView;
  * @author bharddee
  * 
  */
-public class TargetListAdapter extends ArrayAdapter<PingTarget> {
+public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingTargetStatusChangeListener {
 
 	LayoutInflater mInflater;
 	
@@ -121,8 +121,8 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 			.getRttAvg())+ " ms";
 			break;
 		}
-		
 
+		targetList.get(position).setStatusChangeListener(this);
 		holder.targetAddress.setText(targetList.get(position).getHostname());
 		holder.targetRtt.setText(targetRttText);
 		holder.rttLight.setImageDrawable(getStatusImageDrawable((targetList
@@ -205,7 +205,8 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		}	
 
 		// if not found in the list
-		if (newItem){
+		if (newItem){			
+			
 			// add it
 			this.targetList.add(in);
 			notifyDataSetChanged();
@@ -213,8 +214,12 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> {
 		
 		if (BuildConfig.DEBUG) {
 			Log.d(TAG, "Total scanned tragets : " + targetList.size());
-		}
+		}		
 		
-		
+	}
+
+	@Override
+	public void onTargetStatusChange() {
+		notifyDataSetChanged();
 	}
 }
