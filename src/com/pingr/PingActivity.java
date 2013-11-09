@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,20 +39,16 @@ public class PingActivity extends Activity implements OnClickListener,
 	public static Button pingButton;
 	private static EditText targetEditText;
 	// private EditText resultEditText;
-	private InetAddress targetAddress;
 	private ListView targetListView;
 	public static TargetListAdapter adapter;
 
 	/* ping timeout in ms */
-	private static int PING_TIMEOUT = 1000;
 	private static List<PingTarget> targetList = null;
 	private SharedPreferences sharedPref;
 
 	private static String LIST_FILENAME = "pingr_target_list";
 	private File listFile;
 	private FileOutputStream fos;
-	private byte[] byte_buffer;
-	private StringBuilder list_buffer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
