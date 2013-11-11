@@ -42,11 +42,19 @@ public class PingTarget {
 	private PingTargetStatusChangeListener mStatusChangeListener;
 
 	public PingTarget(String mHostname) {
-		super();
-
-		this.mHostname = mHostname;
+		
+		super();		
+		this.mHostname = sanitiseHostName(mHostname);
 		this.mStatusChangeListener = null;
 		this.mStatus = STATUS.UNKNOWN;
+	}
+
+	private String sanitiseHostName(String host) {
+		String result = host;
+		if (host.contains(":")){
+			host.split(":");
+		}
+		return result;
 	}
 
 	public PingTarget(String hostname, int port) {

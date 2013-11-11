@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/LinearLayout1"
+	android:id="@+id/LinearLayoutRoot"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:gravity="center"
@@ -10,15 +10,34 @@
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingTop="@dimen/activity_vertical_margin"
 	tools:context=".PingActivity" >
-	<EditText
-		android:id="@+id/editTextTarget"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:ems="10"
-		android:gravity="center"
-		android:hint="@string/target_en" >
-		<requestFocus />
-	</EditText>
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+
+		<EditText
+		    android:id="@+id/editTextTarget"
+		    android:layout_width="0dip"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="3"
+		    android:ems="10"
+		    android:gravity="center"
+		    android:hint="@string/target_en" />
+
+		<EditText
+		    android:id="@+id/editTextPort"
+		    android:layout_width="0dip"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:ems="10"
+		    android:inputType="numberDecimal"
+		    android:gravity="center"
+		    android:hint="@string/port_en" >
+
+		    <requestFocus />
+		</EditText>
+
+	</LinearLayout>
 	<Button
 		android:id="@+id/buttonPing"
 		android:layout_width="wrap_content"

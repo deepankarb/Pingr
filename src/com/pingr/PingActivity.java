@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,21 +38,16 @@ public class PingActivity extends Activity implements OnClickListener,
 	private static final String TAG = "PingActivity";
 	public static Button pingButton;
 	private static EditText targetEditText;
-	// private EditText resultEditText;
-	private InetAddress targetAddress;
+	private static EditText portEditText;
 	private ListView targetListView;
 	public static TargetListAdapter adapter;
 
-	/* ping timeout in ms */
-	private static int PING_TIMEOUT = 1000;
 	private static List<PingTarget> targetList = null;
 	private SharedPreferences sharedPref;
 
 	private static String LIST_FILENAME = "pingr_target_list";
 	private File listFile;
 	private FileOutputStream fos;
-	private byte[] byte_buffer;
-	private StringBuilder list_buffer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +62,13 @@ public class PingActivity extends Activity implements OnClickListener,
 		pingButton = (Button) findViewById(R.id.buttonPing);
 		pingButton.setOnClickListener(this);
 		targetEditText = (EditText) findViewById(R.id.editTextTarget);
+		portEditText = (EditText) findViewById(R.id.editTextPort);
 		targetListView = (ListView) findViewById(R.id.list_target);
 		targetListView.setOnItemClickListener(this);
 		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
 
 		loadListFromCache();
-
-		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
 	}
 
@@ -111,8 +104,8 @@ public class PingActivity extends Activity implements OnClickListener,
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		PingrApplication.greenThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_green), "200"));
-		PingrApplication.orangeThreshold = Integer.valueOf(sharedPref.getString(
-				getString(R.string.pref_key_orange), "700"));
+		PingrApplication.orangeThreshold = Integer.valueOf(sharedPref
+				.getString(getString(R.string.pref_key_orange), "700"));
 		PingrApplication.redThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_red), "2000"));
 	}
@@ -128,7 +121,7 @@ public class PingActivity extends Activity implements OnClickListener,
 			while ((readHostname = br.readLine()) != null) {
 				if (BuildConfig.DEBUG) {
 					Log.d(TAG, "adding " + readHostname + " t0 list");
-				}				
+				}
 				adapter.add(new PingTarget(readHostname));
 			}
 
@@ -174,12 +167,23 @@ public class PingActivity extends Activity implements OnClickListener,
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(), 0);
 
-			PingTarget mTarget = new PingTarget(targetEditText.getText()
-					.toString().toLowerCase().trim());
-			adapter.addTarget(mTarget);
-			// Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
-			mTarget.ping();
+			String host = targetEditText.getText().toString().toLowerCase()
+					.trim();
+
+			int port = 7;
+			try {
+				port = Integer
+						.valueOf(portEditText.getText().toString().trim());
+			} catch (NumberFormatException e) {
 			
+				e.printStackTrace();
+			}
+
+			PingTarget mTarget = new PingTarget(host, port);
+			adapter.addTarget(mTarget);
+
+			mTarget.ping();
+
 			break;
 
 		default:
@@ -188,9 +192,9 @@ public class PingActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		
+	public boolean onItemLongClick(AdapterView<?> parent, View view,
+			int position, long id) {
+
 		return true;
 	}
 
