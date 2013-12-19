@@ -3,8 +3,8 @@
     <size android:width="32dip"
         android:height="32dip"/>
     <gradient android:type="radial"
-        android:startColor="@color/holo_orange_light"
-        android:endColor="@color/holo_orange_dark"
+        android:startColor="@color/molo_yellow_bright"
+        android:endColor="@color/molo_yellow_dark"
         android:gradientRadius="32"/>
 
 </shape>

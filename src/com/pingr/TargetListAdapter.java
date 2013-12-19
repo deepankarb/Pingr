@@ -115,6 +115,10 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 			break;
 		case UNREACHABLE:
 			targetRttText = "Unreachable";
+			break;
+		case YELLOW:
+			targetRttText = "Host is up";
+			break;
 		default:
 			targetRttText = targetList.get(position)
 			.getRttAvg()==0.0f?"Not reachable":String.valueOf(targetList.get(position)

@@ -10,4 +10,5 @@
 	<string name="pref_key_orange">pref_key_orange</string>
 	<string name="pref_key_red">pref_key_red</string>
 	<string name="port_en">port</string>
+	<string name="clear_list">Clear list</string>
 </resources>

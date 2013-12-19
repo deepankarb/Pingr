@@ -21,5 +21,10 @@
     <color name="holo_orange_dark">#ffff8800</color>
     <!-- A really bright Holo shade of blue -->
     <color name="holo_blue_bright">#ff00ddff</color>
+    
+    <!-- A dark Molo shade of yellow -->
+    <color name="molo_yellow_dark">#ffccdd00</color>
+    <!-- A really bright Molo shade of yellow -->
+    <color name="molo_yellow_bright">#ffffee00</color>    
 
 </resources>

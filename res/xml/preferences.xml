@@ -21,5 +21,8 @@
              >
         </EditTextPreference>
     </PreferenceCategory>
-
+    <Preference 
+        android:key="clear_cache"
+        android:title="CLear cache"/>
+  
 </PreferenceScreen>

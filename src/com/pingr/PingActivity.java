@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -29,6 +30,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.pingr.PingTarget.STATUS;
 
@@ -136,6 +138,12 @@ public class PingActivity extends Activity implements OnClickListener,
 		}
 	}
 
+	private void clearList() {
+		adapter.clear();
+		listFile = new File(getCacheDir(), LIST_FILENAME);
+		listFile.delete();
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -147,7 +155,16 @@ public class PingActivity extends Activity implements OnClickListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			startActivity(new Intent(this, SettingsActivity.class));
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+				startActivity(new Intent(this, SettingsActivity.class));
+			} else {
+				Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT)
+						.show();
+			}
+
+			break;
+		case R.id.action_clear_list:			
+			clearList();
 			break;
 
 		default:
@@ -170,18 +187,17 @@ public class PingActivity extends Activity implements OnClickListener,
 			String host = targetEditText.getText().toString().toLowerCase()
 					.trim();
 
-			int port = 7;
+			int port = 80;
 			try {
 				port = Integer
 						.valueOf(portEditText.getText().toString().trim());
 			} catch (NumberFormatException e) {
-			
+
 				e.printStackTrace();
 			}
 
 			PingTarget mTarget = new PingTarget(host, port);
 			adapter.addTarget(mTarget);
-
 			mTarget.ping();
 
 			break;
