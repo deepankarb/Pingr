@@ -1,4 +1,5 @@
 package com.pingr;
+
 /*
  *	Copyright 2014 Deepankar Bhardwaj 
  * 
@@ -23,10 +24,13 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.http.entity.SerializableEntity;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -35,7 +39,7 @@ import android.util.Log;
  * @author bharddee
  * 
  */
-public class PingTarget {
+public class PingTarget implements Serializable {
 
 	public static enum STATUS {
 		GREEN, YELLOW, ORANGE, RED, PING_IN_PROGRESS, UNKNOWN, UNREACHABLE;
@@ -43,6 +47,7 @@ public class PingTarget {
 
 	public static final String TAG = PingTarget.class.getName();
 
+	private static final long serialVersionUID = 0xdeadbeef;
 	private InetAddress mAddress; // Target address
 	private String mHostname;
 	private int mPort; // Target port
@@ -226,7 +231,8 @@ public class PingTarget {
 		PortPing pp = new PortPing(getHostname(), mPort);
 		int portResult = pp.ping();
 		if (BuildConfig.DEBUG) {
-			Log.v(TAG, "port "+mPort + (portResult==0?" is OPEN": " might be CLOSED ;)"));
+			Log.v(TAG, "port " + mPort
+					+ (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
 		}
 
 		return result;

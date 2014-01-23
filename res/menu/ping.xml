@@ -22,7 +22,7 @@
         android:title="@string/action_settings"/>
     <item
         android:id="@+id/action_clear_list"
-        android:icon="@android:drawable/ic_delete"
+        android:icon="@drawable/ic_notify_clear_normal"
         android:orderInCategory="90"
         android:showAsAction="always"
         android:title="@string/clear_list"/>

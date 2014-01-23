@@ -131,7 +131,7 @@ public class PingActivity extends Activity implements OnClickListener,
 
 	private void loadListFromCache() {
 		// clear the current list
-		adapter.clear();
+		//adapter.clear();
 		// read list from cache
 		listFile = new File(getCacheDir(), LIST_FILENAME);
 		String readHostname = new String();
@@ -142,6 +142,9 @@ public class PingActivity extends Activity implements OnClickListener,
 			while ((readHostname = br.readLine()) != null) {
 				if (BuildConfig.DEBUG) {
 					Log.d(TAG, "adding " + readHostname + " to list");
+				}
+				if (adapter.isHostInList(readHostname)){
+					continue;
 				}
 				adapter.add(new PingTarget(readHostname));
 			}
@@ -205,6 +208,11 @@ public class PingActivity extends Activity implements OnClickListener,
 
 			String host = targetEditText.getText().toString().toLowerCase()
 					.trim();
+			
+			if (!isValidHost(host)){
+				Toast.makeText(this, "Invalid hostname!", Toast.LENGTH_SHORT).show();
+				break;
+			}
 
 			int port = 80;
 			try {
@@ -224,6 +232,13 @@ public class PingActivity extends Activity implements OnClickListener,
 		default:
 			break;
 		}
+	}
+
+	private boolean isValidHost(String host) {
+		if (host.isEmpty()){
+			return false;
+		}
+		return true;
 	}
 
 	@Override

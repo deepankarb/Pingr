@@ -34,19 +34,20 @@ import android.widget.TextView;
  * @author bharddee
  * 
  */
-public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingTargetStatusChangeListener {
+public class TargetListAdapter extends ArrayAdapter<PingTarget> implements
+		PingTargetStatusChangeListener {
 
 	LayoutInflater mInflater;
 	private Context context;
 	private static final String TAG = "TargetListAdapter";
 	private static final int MAX_TARGETS = 10;
-	
+
 	private class ViewHolder {
 		TextView targetAddress;
 		TextView targetRtt;
 		ImageView rttLight;
 	}
-	
+
 	public TargetListAdapter(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
 		this.context = context;
@@ -54,9 +55,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
-	
-	
-	
+
 	public TargetListAdapter(Context context, int textViewResourceId,
 			List<PingTarget> objects) {
 		super(context, textViewResourceId, objects);
@@ -66,9 +65,8 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
-
-
 	private List<PingTarget> targetList;
+
 	/**
 	 * @return the targetList
 	 */
@@ -76,9 +74,14 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 		return targetList;
 	}
 
-
-
-
+	public boolean isHostInList(String inHost) {
+		for (PingTarget pt : targetList) {
+			if (pt.getHostname().equalsIgnoreCase(inHost)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public int getCount() {
@@ -102,7 +105,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		ViewHolder holder;
-		
+
 		String targetRttText = new String();
 
 		if (convertView == null) {
@@ -119,11 +122,11 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		
-		switch (targetList.get(position).getStatus()) {		
+
+		switch (targetList.get(position).getStatus()) {
 		case UNKNOWN:
 			targetRttText = "Status unknown";
-			break;			
+			break;
 		case PING_IN_PROGRESS:
 			targetRttText = "Pinging";
 			break;
@@ -134,9 +137,9 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 			targetRttText = "Host is up";
 			break;
 		default:
-			targetRttText = targetList.get(position)
-			.getRttAvg()==0.0f?"Not reachable":String.valueOf(targetList.get(position)
-			.getRttAvg())+ " ms";
+			targetRttText = targetList.get(position).getRttAvg() == 0.0f ? "Not reachable"
+					: String.valueOf(targetList.get(position).getRttAvg())
+							+ " ms";
 			break;
 		}
 
@@ -149,6 +152,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 		return convertView;
 
 	}
+
 	@Override
 	public int getViewTypeCount() {
 		// TODO Auto-generated method stub
@@ -159,13 +163,11 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 	public boolean hasStableIds() {
 		return true;
 	}
-	
+
 	@Override
-	public long getItemId(int position) {	
+	public long getItemId(int position) {
 		return position;
 	}
-	
-	
 
 	@Override
 	public boolean isEmpty() {
@@ -177,30 +179,28 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 
 	private Drawable getStatusImageDrawable(PingTarget p) {
 		Drawable result;
-		if (p.getStatus() == null) return context.getResources().getDrawable(R.drawable.rtt_red);
+		if (p.getStatus() == null)
+			return context.getResources().getDrawable(R.drawable.rtt_red);
 		switch (p.getStatus()) {
 
-			case GREEN :
-				result = context.getResources().getDrawable(
-						R.drawable.rtt_green);
-				break;
-			case ORANGE :
-				result = context.getResources().getDrawable(
-						R.drawable.rtt_orange);
-				break;
-			case RED :
-				result = context.getResources().getDrawable(R.drawable.rtt_red);
-				break;
-			case YELLOW :
-				result = context.getResources().getDrawable(
-						R.drawable.rtt_yellow);
-				break;
-//			case UNKNOWN:
-//				result = context.getResources().getDrawable();
-//				break;
-			default :
-				result = context.getResources().getDrawable(R.drawable.rtt_red);
-				break;
+		case GREEN:
+			result = context.getResources().getDrawable(R.drawable.rtt_green);
+			break;
+		case ORANGE:
+			result = context.getResources().getDrawable(R.drawable.rtt_orange);
+			break;
+		case RED:
+			result = context.getResources().getDrawable(R.drawable.rtt_red);
+			break;
+		case YELLOW:
+			result = context.getResources().getDrawable(R.drawable.rtt_yellow);
+			break;
+		// case UNKNOWN:
+		// result = context.getResources().getDrawable();
+		// break;
+		default:
+			result = context.getResources().getDrawable(R.drawable.rtt_red);
+			break;
 		}
 		return result;
 	}
@@ -209,31 +209,30 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements PingT
 
 		// let's assume this is a new target
 		boolean newItem = true;
-		
+
 		// now look for it in the list
-		for (PingTarget p: targetList)
-		{
+		for (PingTarget p : targetList) {
 			// and if already present in the list
-			if (p.getHostname().trim().equals(in.getHostname().trim())){
+			if (p.getHostname().trim().equals(in.getHostname().trim())) {
 				p = in; // replace it
 				notifyDataSetChanged();
 				// it's not new anymore
 				newItem = false;
 			}
-		}	
+		}
 
 		// if not found in the list
-		if (newItem){			
-			
+		if (newItem) {
+
 			// add it
 			this.targetList.add(in);
 			notifyDataSetChanged();
-		}			
-		
+		}
+
 		if (BuildConfig.DEBUG) {
 			Log.d(TAG, "Total scanned tragets : " + targetList.size());
-		}		
-		
+		}
+
 	}
 
 	@Override
