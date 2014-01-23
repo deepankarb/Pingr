@@ -15,8 +15,9 @@ before_install:
   # Go!
   - wget -q $URL_ANDROID_SDK
   - tar xzf $FILENAME_SDK
-  - echo yes | android -s update sdk --filter platform-tool --no-ui > /dev/null
+  - echo yes | android -s update sdk --filter platform-tools --no-ui > /dev/null
   - echo yes | android -s update sdk --filter android-19 --no-ui > /dev/null
+  - echo yes | android -s update sdk -a --filter "build-tools-19.0.1" --no-ui > /dev/null
   
 before_script:
   - android -s update project --path . --name "Pingr" --target "android-19"
