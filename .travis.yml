@@ -2,7 +2,7 @@ language: java
 jdk: oraclejdk7
 branches:
   only:
-    -master
+    - master
 before_install:
   #  - chmod +x gradlew
   # Install base Android SDK
