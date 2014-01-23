@@ -1,3 +1,20 @@
+/*
+ *	Copyright 2014 Deepankar Bhardwaj 
+ * 
+ *	Licensed under the Apache License, Version 2.0 (the "License");
+ *	you may not use this file except in compliance with the License. 
+ *	You may obtain a copy of the License at 
+ * 	
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *	Unless required by applicable law or agreed to in writing, software
+ *	distributed under the License is distributed on an "AS IS" BASIS,
+ * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 	See the License for the specific language governing permissions and
+ * 	limitations under the License.
+ * 
+ */
+
 package com.pingr;
 
 import java.io.BufferedReader;
@@ -15,6 +32,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -29,6 +47,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.pingr.PingTarget.STATUS;
 
@@ -38,11 +57,10 @@ public class PingActivity extends Activity implements OnClickListener,
 	private static final String TAG = "PingActivity";
 	public static Button pingButton;
 	private static EditText targetEditText;
-	// private EditText resultEditText;
+	private static EditText portEditText;
 	private ListView targetListView;
 	public static TargetListAdapter adapter;
 
-	/* ping timeout in ms */
 	private static List<PingTarget> targetList = null;
 	private SharedPreferences sharedPref;
 
@@ -63,14 +81,13 @@ public class PingActivity extends Activity implements OnClickListener,
 		pingButton = (Button) findViewById(R.id.buttonPing);
 		pingButton.setOnClickListener(this);
 		targetEditText = (EditText) findViewById(R.id.editTextTarget);
+		portEditText = (EditText) findViewById(R.id.editTextPort);
 		targetListView = (ListView) findViewById(R.id.list_target);
 		targetListView.setOnItemClickListener(this);
 		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
 
 		loadListFromCache();
-
-		// resultEditText = (EditText) findViewById(R.id.editTextPingResult);
 
 	}
 
@@ -106,13 +123,15 @@ public class PingActivity extends Activity implements OnClickListener,
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		PingrApplication.greenThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_green), "200"));
-		PingrApplication.orangeThreshold = Integer.valueOf(sharedPref.getString(
-				getString(R.string.pref_key_orange), "700"));
+		PingrApplication.orangeThreshold = Integer.valueOf(sharedPref
+				.getString(getString(R.string.pref_key_orange), "700"));
 		PingrApplication.redThreshold = Integer.valueOf(sharedPref.getString(
 				getString(R.string.pref_key_red), "2000"));
 	}
 
 	private void loadListFromCache() {
+		// clear the current list
+		adapter.clear();
 		// read list from cache
 		listFile = new File(getCacheDir(), LIST_FILENAME);
 		String readHostname = new String();
@@ -122,8 +141,8 @@ public class PingActivity extends Activity implements OnClickListener,
 
 			while ((readHostname = br.readLine()) != null) {
 				if (BuildConfig.DEBUG) {
-					Log.d(TAG, "adding " + readHostname + " t0 list");
-				}				
+					Log.d(TAG, "adding " + readHostname + " to list");
+				}
 				adapter.add(new PingTarget(readHostname));
 			}
 
@@ -138,6 +157,12 @@ public class PingActivity extends Activity implements OnClickListener,
 		}
 	}
 
+	private void clearList() {
+		adapter.clear();
+		listFile = new File(getCacheDir(), LIST_FILENAME);
+		listFile.delete();
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -149,7 +174,16 @@ public class PingActivity extends Activity implements OnClickListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			startActivity(new Intent(this, SettingsActivity.class));
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+				startActivity(new Intent(this, SettingsActivity.class));
+			} else {
+				Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT)
+						.show();
+			}
+
+			break;
+		case R.id.action_clear_list:
+			clearList();
 			break;
 
 		default:
@@ -169,12 +203,22 @@ public class PingActivity extends Activity implements OnClickListener,
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(), 0);
 
-			PingTarget mTarget = new PingTarget(targetEditText.getText()
-					.toString().toLowerCase().trim());
+			String host = targetEditText.getText().toString().toLowerCase()
+					.trim();
+
+			int port = 80;
+			try {
+				port = Integer
+						.valueOf(portEditText.getText().toString().trim());
+			} catch (NumberFormatException e) {
+
+				e.printStackTrace();
+			}
+
+			PingTarget mTarget = new PingTarget(host, port);
 			adapter.addTarget(mTarget);
-			// Pingr.pingAsyncTask(mTarget, PING_TIMEOUT);
 			mTarget.ping();
-			
+
 			break;
 
 		default:
@@ -183,9 +227,9 @@ public class PingActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		
+	public boolean onItemLongClick(AdapterView<?> parent, View view,
+			int position, long id) {
+
 		return true;
 	}
 
