@@ -15,8 +15,9 @@ before_install:
   # Go!
   - wget -q $URL_ANDROID_SDK
   - tar xzf $FILENAME_SDK
-  - echo yes | android -s update sdk --filter android-19 --no-ui > /dev/null
   - echo yes | android -s update sdk --filter platform-tool --no-ui > /dev/null
+  - echo yes | android -s update sdk --filter android-19 --no-ui > /dev/null
+  
 script:
-   ant clean
-   ant debug
+  - ant clean
+  - ant debug
