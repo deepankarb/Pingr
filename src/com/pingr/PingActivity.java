@@ -1,3 +1,20 @@
+/*
+ *	Copyright 2013 Deepankar Bhardwaj 
+ * 
+ *	Licensed under the Apache License, Version 2.0 (the "License");
+ *	you may not use this file except in compliance with the License. 
+ *	You may obtain a copy of the License at 
+ * 	
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *	Unless required by applicable law or agreed to in writing, software
+ *	distributed under the License is distributed on an "AS IS" BASIS,
+ * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 	See the License for the specific language governing permissions and
+ * 	limitations under the License.
+ * 
+ */
+
 package com.pingr;
 
 import java.io.BufferedReader;
@@ -55,6 +72,7 @@ public class PingActivity extends Activity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ping);
+		
 
 		if (targetList == null) {
 			targetList = new ArrayList<PingTarget>();
@@ -113,6 +131,8 @@ public class PingActivity extends Activity implements OnClickListener,
 	}
 
 	private void loadListFromCache() {
+		//  clear the current list
+		adapter.clear();
 		// read list from cache
 		listFile = new File(getCacheDir(), LIST_FILENAME);
 		String readHostname = new String();
@@ -122,7 +142,7 @@ public class PingActivity extends Activity implements OnClickListener,
 
 			while ((readHostname = br.readLine()) != null) {
 				if (BuildConfig.DEBUG) {
-					Log.d(TAG, "adding " + readHostname + " t0 list");
+					Log.d(TAG, "adding " + readHostname + " to list");
 				}
 				adapter.add(new PingTarget(readHostname));
 			}
