@@ -18,6 +18,9 @@ before_install:
   - echo yes | android -s update sdk --filter platform-tool --no-ui > /dev/null
   - echo yes | android -s update sdk --filter android-19 --no-ui > /dev/null
   
+before_script:
+  - android -s update project --path . --name "Pingr" --target "android-19"
+  
 script:
   - ant clean
   - ant debug
