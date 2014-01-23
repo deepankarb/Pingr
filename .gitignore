@@ -43,3 +43,8 @@ local.properties
 .buildpath
 /proguard-project.txt
 /project.properties
+
+lint.xml
+
+# ant build config
+build.xml
