@@ -4,4 +4,4 @@ Pingr
 
 Connectivity tester app
 
-Pinger!
+Build status for master branch at travis-ci: [![Build Status](https://travis-ci.org/deepankarb/Pingr.png?branch=master)](https://travis-ci.org/deepankarb/Pingr)
