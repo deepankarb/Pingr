@@ -1,4 +1,4 @@
-package com.pingr;
+package org.zerogravity.pingr;
 
 /*
  *	Copyright 2014 Deepankar Bhardwaj 
@@ -29,9 +29,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.http.entity.SerializableEntity;
-
 import android.os.AsyncTask;
 import android.util.Log;
 

@@ -14,7 +14,7 @@
  * 	limitations under the License.
  * 
  */
-package com.pingr;
+package org.zerogravity.pingr;
 
 /**
  * @author bharddee

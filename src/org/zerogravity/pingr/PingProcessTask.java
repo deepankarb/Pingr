@@ -15,7 +15,7 @@
  * 
  */
 
-package com.pingr;
+package org.zerogravity.pingr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.zerogravity.pingr.PingTarget.STATUS;
+
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.pingr.PingTarget.STATUS;
 
 /**
  * @author bharddee

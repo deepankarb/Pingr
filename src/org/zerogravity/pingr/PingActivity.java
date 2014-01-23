@@ -15,7 +15,7 @@
  * 
  */
 
-package com.pingr;
+package org.zerogravity.pingr;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.zerogravity.pingr.PingTarget.STATUS;
 
 import android.app.Activity;
 import android.content.Context;
@@ -48,8 +50,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.pingr.PingTarget.STATUS;
 
 public class PingActivity extends Activity implements OnClickListener,
 		OnItemClickListener, OnItemLongClickListener {

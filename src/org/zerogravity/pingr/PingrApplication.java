@@ -15,7 +15,7 @@
  * 
  */
 
-package com.pingr;
+package org.zerogravity.pingr;
 
 import android.app.Application;
 

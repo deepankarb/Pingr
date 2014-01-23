@@ -15,7 +15,7 @@
  * 
  */
 
-package com.pingr;
+package org.zerogravity.pingr;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
