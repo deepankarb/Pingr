@@ -37,11 +37,13 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -53,18 +55,16 @@ import android.widget.Toast;
 
 public class PingActivity extends Activity implements OnClickListener,
 		OnItemClickListener, OnItemLongClickListener {
-
-	private static final String TAG = "PingActivity";
+	
 	public static Button pingButton;
+	public static TargetListAdapter adapter;
+	private static final String TAG = "PingActivity";
 	private static EditText targetEditText;
 	private static EditText portEditText;
-	private ListView targetListView;
-	public static TargetListAdapter adapter;
-
 	private static List<PingTarget> targetList = null;
-	private SharedPreferences sharedPref;
-
 	private static String LIST_FILENAME = "pingr_target_list";
+	private ListView targetListView;
+	private SharedPreferences sharedPref;
 	private File listFile;
 	private FileOutputStream fos;
 
@@ -81,6 +81,21 @@ public class PingActivity extends Activity implements OnClickListener,
 		pingButton = (Button) findViewById(R.id.buttonPing);
 		pingButton.setOnClickListener(this);
 		targetEditText = (EditText) findViewById(R.id.editTextTarget);
+		targetEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		targetEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+		targetEditText.requestFocus();
+
+		// targetEditText.setOnEditorActionListener(new
+		// TextView.OnEditorActionListener() {
+		// @Override
+		// public boolean onEditorAction(TextView v, int actionId,
+		// KeyEvent event) {
+		//
+		//
+		// return false;
+		// }
+		// });
+
 		portEditText = (EditText) findViewById(R.id.editTextPort);
 		targetListView = (ListView) findViewById(R.id.list_target);
 		targetListView.setOnItemClickListener(this);
@@ -93,7 +108,6 @@ public class PingActivity extends Activity implements OnClickListener,
 
 	@Override
 	protected void onPause() {
-
 		super.onPause();
 		saveListToCache();
 	}
@@ -131,7 +145,7 @@ public class PingActivity extends Activity implements OnClickListener,
 
 	private void loadListFromCache() {
 		// clear the current list
-		//adapter.clear();
+		// adapter.clear();
 		// read list from cache
 		listFile = new File(getCacheDir(), LIST_FILENAME);
 		String readHostname = new String();
@@ -143,7 +157,7 @@ public class PingActivity extends Activity implements OnClickListener,
 				if (BuildConfig.DEBUG) {
 					Log.d(TAG, "adding " + readHostname + " to list");
 				}
-				if (adapter.isHostInList(readHostname)){
+				if (adapter.isHostInList(readHostname)) {
 					continue;
 				}
 				adapter.add(new PingTarget(readHostname));
@@ -208,9 +222,10 @@ public class PingActivity extends Activity implements OnClickListener,
 
 			String host = targetEditText.getText().toString().toLowerCase()
 					.trim();
-			
-			if (!isValidHost(host)){
-				Toast.makeText(this, "Invalid hostname!", Toast.LENGTH_SHORT).show();
+
+			if (!isValidHost(host)) {
+				Toast.makeText(this, "Invalid hostname!", Toast.LENGTH_SHORT)
+						.show();
 				break;
 			}
 
@@ -235,7 +250,7 @@ public class PingActivity extends Activity implements OnClickListener,
 	}
 
 	private boolean isValidHost(String host) {
-		if (host.isEmpty()){
+		if (host.isEmpty()) {
 			return false;
 		}
 		return true;
@@ -262,8 +277,9 @@ public class PingActivity extends Activity implements OnClickListener,
 			Log.d(TAG, p.getHostname());
 		}
 
-		if (p.getStatus() != STATUS.PING_IN_PROGRESS)
+		if ( p.getStatus() != STATUS.PING_IN_PROGRESS) {
 			// Pingr.pingAsyncTask(p, PING_TIMEOUT);
 			p.ping();
+		}
 	}
 }
