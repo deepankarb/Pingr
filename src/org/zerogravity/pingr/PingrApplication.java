@@ -24,8 +24,8 @@ import android.app.Application;
  * 
  */
 public class PingrApplication extends Application {
-	
-	private static PingrApplication instance;	
+
+	private static PingrApplication instance;
 
 	public static PingrApplication getInstance() {
 		return instance;

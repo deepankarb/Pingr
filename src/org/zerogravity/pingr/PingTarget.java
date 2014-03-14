@@ -17,20 +17,10 @@ package org.zerogravity.pingr;
  * 
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.apache.http.entity.SerializableEntity;
-import android.os.AsyncTask;
+
+import android.content.Context;
 import android.util.Log;
 
 /**

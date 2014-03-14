@@ -24,12 +24,14 @@
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name="org.zerogravity.pingr.PingrApplication" >
         <activity
             android:name="org.zerogravity.pingr.PingActivity"
             android:label="@string/app_name" >
