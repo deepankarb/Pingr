@@ -30,6 +30,8 @@ import java.util.List;
 
 import org.zerogravity.pingr.PingTarget.STATUS;
 
+import de.timroes.android.listview.EnhancedListView;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -63,7 +65,7 @@ public class PingActivity extends Activity implements OnClickListener,
 	private static EditText portEditText;
 	private static List<PingTarget> targetList = null;
 	private static String LIST_FILENAME = "pingr_target_list";
-	private ListView targetListView;
+	private EnhancedListView targetListView;
 	private SharedPreferences sharedPref;
 	private File listFile;
 	private FileOutputStream fos;
@@ -97,7 +99,7 @@ public class PingActivity extends Activity implements OnClickListener,
 		// });
 
 		portEditText = (EditText) findViewById(R.id.editTextPort);
-		targetListView = (ListView) findViewById(R.id.list_target);
+		targetListView = (EnhancedListView) findViewById(R.id.list_target);
 		targetListView.setOnItemClickListener(this);
 		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
