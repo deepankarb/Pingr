@@ -47,6 +47,8 @@ public class PingTarget implements Serializable {
 	private float mRttStdDev; // unused
 	public PingTargetStatusChangeListener mStatusChangeListener;
 
+	private PingTask pingTask;
+
 	public PingTarget(String mHostname) {
 
 		super();
@@ -214,15 +216,24 @@ public class PingTarget implements Serializable {
 
 		boolean result = false;
 
-		new PingTask(this).execute((Void) null);
-
-		PortPing pp = new PortPing(getHostname(), mPort);
-		int portResult = pp.ping();
-		if (BuildConfig.DEBUG) {
-			Log.v(TAG, "port " + mPort
-					+ (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
+		if (this.pingTask == null){
+			pingTask = new PingTask(this);		
+			pingTask.execute((Void) null);	
 		}
+		
+//		PortPing pp = new PortPing(getHostname(), mPort);
+//		int portResult = pp.ping();
+//		if (BuildConfig.DEBUG) {
+//			Log.v(TAG, "port " + mPort
+//					+ (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
+//		}
 
 		return result;
+	}
+	
+	public void requestPingAbort(){
+		if (!this.pingTask.isCancelled()){
+			this.pingTask.cancel(true);
+		}
 	}
 }

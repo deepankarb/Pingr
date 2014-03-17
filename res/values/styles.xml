@@ -27,4 +27,10 @@
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme"> <!-- All customizations that are NOT specific to a particular API-level can go here. -->
 	</style>
+	
+<!-- 	Merge from EnhancedListView --><style name="elv_fade_animation">
+        <item name="@android:windowEnterAnimation">@anim/elv_popup_show</item>
+        <item name="@android:windowExitAnimation">@anim/elv_popup_hide</item>
+    </style>
+
 </resources>

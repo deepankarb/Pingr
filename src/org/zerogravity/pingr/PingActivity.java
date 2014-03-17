@@ -30,8 +30,6 @@ import java.util.List;
 
 import org.zerogravity.pingr.PingTarget.STATUS;
 
-import de.timroes.android.listview.EnhancedListView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -52,8 +50,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
+import de.timroes.android.listview.EnhancedListView;
+import de.timroes.android.listview.EnhancedListView.Undoable;
 
 public class PingActivity extends Activity implements OnClickListener,
 		OnItemClickListener, OnItemLongClickListener {
@@ -103,7 +102,29 @@ public class PingActivity extends Activity implements OnClickListener,
 		targetListView.setOnItemClickListener(this);
 		targetListView.setOnItemLongClickListener(this);
 		targetListView.setAdapter(adapter);
+	
+		//targetListView.setSwipingLayout(R.id.s)
+		targetListView.setDismissCallback(new de.timroes.android.listview.EnhancedListView.OnDismissCallback() {
+			
+			@Override
+			public Undoable onDismiss(EnhancedListView listView, final int position) {
+				final PingTarget item = adapter.getItem(position);
+				adapter.remove(position);
+				return new EnhancedListView.Undoable() {
+					
+					@Override
+					public void undo() {
+					 adapter.insert(item, position);
+					}
+				};
+			}
+		});
 
+		targetListView.setUndoStyle(EnhancedListView.UndoStyle.MULTILEVEL_POPUP);
+		targetListView.setRequireTouchBeforeDismiss(false);
+		targetListView.setSwipeDirection(EnhancedListView.SwipeDirection.BOTH);
+		targetListView.enableSwipeToDismiss();
+		
 		loadListFromCache();
 
 	}
