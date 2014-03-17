@@ -214,7 +214,7 @@ public class PingTarget implements Serializable {
 
 		boolean result = false;
 
-		new PingProcessTask(this).execute((Void) null);
+		new PingTask(this).execute((Void) null);
 
 		PortPing pp = new PortPing(getHostname(), mPort);
 		int portResult = pp.ping();

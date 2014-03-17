@@ -18,9 +18,7 @@
 package org.zerogravity.pingr;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 import android.os.AsyncTask;

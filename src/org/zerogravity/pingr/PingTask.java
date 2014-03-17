@@ -37,9 +37,9 @@ import android.util.Log;
  * @author bharddee
  * 
  */
-class PingProcessTask extends AsyncTask<Void, Void, Void> {
+class PingTask extends AsyncTask<Void, Void, Void> {
 
-	private static final String TAG = PingTarget.class.getName();
+	private static final String TAG = PingTask.class.getName();
 
 	PipedOutputStream mPOut;
 	PipedInputStream mPIn;
@@ -56,7 +56,7 @@ class PingProcessTask extends AsyncTask<Void, Void, Void> {
 	private int exitValue = -1;
 	private boolean statsAvailable = false;
 
-	public PingProcessTask(PingTarget pt) {
+	public PingTask(PingTarget pt) {
 		this.pingTarget = pt;
 	}
 
