@@ -20,9 +20,6 @@ package org.zerogravity.pingr;
 import java.io.Serializable;
 import java.net.InetAddress;
 
-import android.content.Context;
-import android.util.Log;
-
 /**
  * @author bharddee
  * 
@@ -216,23 +213,23 @@ public class PingTarget implements Serializable {
 
 		boolean result = false;
 
-		if (this.pingTask == null){
-			pingTask = new PingTask(this);		
-			pingTask.execute((Void) null);	
+		if (this.pingTask == null) {
+			pingTask = new PingTask(this);
+			pingTask.execute((Void) null);
 		}
-		
-//		PortPing pp = new PortPing(getHostname(), mPort);
-//		int portResult = pp.ping();
-//		if (BuildConfig.DEBUG) {
-//			Log.v(TAG, "port " + mPort
-//					+ (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
-//		}
+
+		// PortPing pp = new PortPing(getHostname(), mPort);
+		// int portResult = pp.ping();
+		// if (BuildConfig.DEBUG) {
+		// Log.v(TAG, "port " + mPort
+		// + (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
+		// }
 
 		return result;
 	}
-	
-	public void requestPingAbort(){
-		if (!this.pingTask.isCancelled()){
+
+	public void requestPingAbort() {
+		if (this.pingTask != null && !this.pingTask.isCancelled()) {
 			this.pingTask.cancel(true);
 		}
 	}
