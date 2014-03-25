@@ -238,7 +238,7 @@ public class PingActivity extends Activity implements OnClickListener,
 		switch (v.getId()) {
 
 		case R.id.buttonPing:
-
+						
 			// hide keyboard
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(targetEditText.getWindowToken(), 0);

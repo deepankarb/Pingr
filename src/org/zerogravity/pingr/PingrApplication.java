@@ -17,12 +17,28 @@
 
 package org.zerogravity.pingr;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
 import android.app.Application;
 
 /**
  * @author bharddee Singleton application class
  * 
  */
+
+@ReportsCrashes(
+        formKey = "",
+        formUri = "https://pingr.cloudant.com/acra-pingr-gh/_design/acra-storage/_update/report",
+        reportType = org.acra.sender.HttpSender.Type.JSON,
+        httpMethod = org.acra.sender.HttpSender.Method.PUT,
+        formUriBasicAuthLogin="bitiewhilymoreadortessli",
+        formUriBasicAuthPassword="7jmDbbywAXmEtSRUI3OKQIhI",
+        // Your usual ACRA configuration
+        mode = ReportingInteractionMode.TOAST,
+        resToastText=R.string.crash_toast
+        )
 public class PingrApplication extends Application {
 
 	private static PingrApplication instance;
@@ -38,6 +54,7 @@ public class PingrApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		ACRA.init(this);
 		instance = this;
 	}
 }
