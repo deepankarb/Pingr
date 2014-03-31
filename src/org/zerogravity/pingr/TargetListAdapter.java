@@ -15,7 +15,7 @@
  * 
  */
 
-package com.pingr;
+package org.zerogravity.pingr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements
 
 	LayoutInflater mInflater;
 	private Context context;
-	private static final String TAG = "TargetListAdapter";
+	private static final String TAG = TargetListAdapter.class.getName();
 	private static final int MAX_TARGETS = 10;
 
 	private class ViewHolder {
@@ -72,6 +72,12 @@ public class TargetListAdapter extends ArrayAdapter<PingTarget> implements
 	 */
 	public List<PingTarget> getTargetList() {
 		return targetList;
+	}
+	
+	public void remove(int pos) {
+		targetList.get(pos).requestPingAbort();
+		targetList.remove(pos);
+		notifyDataSetChanged();
 	}
 
 	public boolean isHostInList(String inHost) {

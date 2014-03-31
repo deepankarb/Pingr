@@ -1,4 +1,4 @@
-package com.pingr;
+package org.zerogravity.pingr;
 
 /*
  *	Copyright 2014 Deepankar Bhardwaj 
@@ -17,23 +17,8 @@ package com.pingr;
  * 
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.http.entity.SerializableEntity;
-
-import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * @author bharddee
@@ -58,6 +43,8 @@ public class PingTarget implements Serializable {
 	private float mRttMax;
 	private float mRttStdDev; // unused
 	public PingTargetStatusChangeListener mStatusChangeListener;
+
+	private PingTask pingTask;
 
 	public PingTarget(String mHostname) {
 
@@ -226,15 +213,24 @@ public class PingTarget implements Serializable {
 
 		boolean result = false;
 
-		new PingProcessTask(this).execute((Void) null);
-
-		PortPing pp = new PortPing(getHostname(), mPort);
-		int portResult = pp.ping();
-		if (BuildConfig.DEBUG) {
-			Log.v(TAG, "port " + mPort
-					+ (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
+		if (this.pingTask == null) {
+			pingTask = new PingTask(this);
+			pingTask.execute((Void) null);
 		}
 
+		// PortPing pp = new PortPing(getHostname(), mPort);
+		// int portResult = pp.ping();
+		// if (BuildConfig.DEBUG) {
+		// Log.v(TAG, "port " + mPort
+		// + (portResult == 0 ? " is OPEN" : " might be CLOSED ;)"));
+		// }
+
 		return result;
+	}
+
+	public void requestPingAbort() {
+		if (this.pingTask != null && !this.pingTask.isCancelled()) {
+			this.pingTask.cancel(true);
+		}
 	}
 }

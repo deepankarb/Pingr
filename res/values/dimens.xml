@@ -11,10 +11,18 @@
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
-	limitations under the License.
+	limitations under the License.
 -->
 <resources>
-	<!-- Default screen margins, per the Android Design guidelines. -->
-	<dimen name="activity_horizontal_margin">16dp</dimen>
-	<dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Merge from EnhancedListView -->
+    <!-- The bottom offset the undo popup should have -->
+    <dimen name="elv_undo_bottom_offset">15dp</dimen>
+    <!-- The touch slop you need to cause a swipe instead of a scroll -->
+    <dimen name="elv_touch_slop">32dp</dimen>
+
 </resources>

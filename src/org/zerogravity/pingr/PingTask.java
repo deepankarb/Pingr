@@ -15,7 +15,7 @@
  * 
  */
 
-package com.pingr;
+package org.zerogravity.pingr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,18 +28,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.zerogravity.pingr.PingTarget.STATUS;
+
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.pingr.PingTarget.STATUS;
 
 /**
  * @author bharddee
  * 
  */
-class PingProcessTask extends AsyncTask<Void, Void, Void> {
+class PingTask extends AsyncTask<Void, Void, Void> {
 
-	private static final String TAG = PingTarget.class.getName();
+	private static final String TAG = PingTask.class.getName();
 
 	PipedOutputStream mPOut;
 	PipedInputStream mPIn;
@@ -56,7 +56,7 @@ class PingProcessTask extends AsyncTask<Void, Void, Void> {
 	private int exitValue = -1;
 	private boolean statsAvailable = false;
 
-	public PingProcessTask(PingTarget pt) {
+	public PingTask(PingTarget pt) {
 		this.pingTarget = pt;
 	}
 

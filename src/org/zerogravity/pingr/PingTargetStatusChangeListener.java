@@ -14,30 +14,13 @@
  * 	limitations under the License.
  * 
  */
-
-package com.pingr;
-
-import android.app.Application;
+package org.zerogravity.pingr;
 
 /**
- * @author bharddee Singleton application class
- * 
+ * @author bharddee
+ *
  */
-public class PingrApplication extends Application {
-	
-	private static PingrApplication instance;	
 
-	public static PingrApplication getInstance() {
-		return instance;
-	}
-
-	public static int greenThreshold;
-	public static int orangeThreshold;
-	public static int redThreshold;
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		instance = this;
-	}
+public interface PingTargetStatusChangeListener {
+	void onTargetStatusChange();
 }
