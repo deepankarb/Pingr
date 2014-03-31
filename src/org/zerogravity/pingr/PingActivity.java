@@ -238,6 +238,10 @@ public class PingActivity extends Activity implements OnClickListener,
 		switch (v.getId()) {
 
 		case R.id.buttonPing:
+			
+//			//Cause NPE to test ACRA
+//			String NPE = null;
+//			Log.v(NPE,NPE);
 						
 			// hide keyboard
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
