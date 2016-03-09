@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\elv_toast_frame.9.png",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable-xhdpi\\elv_toast_frame.9.png"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\elv_ic_action_undo.png",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable-xhdpi\\elv_ic_action_undo.png"
+    }
+]

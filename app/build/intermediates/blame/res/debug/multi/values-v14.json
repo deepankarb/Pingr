@@ -1,0 +1,28 @@
+[
+    {
+        "outputFile": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\values-v14\\values-v14.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endLine": 3,
+                    "endColumn": 9,
+                    "endOffset": 171
+                },
+                "from": {
+                    "file": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\values-v14\\styles.xml",
+                    "position": {
+                        "startLine": 37,
+                        "startColumn": 1,
+                        "startOffset": 1404,
+                        "endLine": 38,
+                        "endColumn": 9,
+                        "endOffset": 1521
+                    }
+                }
+            }
+        ]
+    }
+]

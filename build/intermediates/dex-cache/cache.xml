@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Deveshwar\AndroidStudioProjects\Pingr\app\libs\annotations.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f95f683d12f08941b20f0b78d17b07ef957af79d">
+        <dex dex="C:\Users\Deveshwar\AndroidStudioProjects\Pingr\app\build\intermediates\pre-dexed\debug\annotations_605c6bd686b9271a79be85d2348b32826f7e714a.jar" />
+    </item>
+    <item
+        jar="C:\Users\Deveshwar\AndroidStudioProjects\Pingr\app\libs\acra-4.5.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="44a5eb946e0d83eed4a0128d877ca1fd8168b83a">
+        <dex dex="C:\Users\Deveshwar\AndroidStudioProjects\Pingr\app\build\intermediates\pre-dexed\debug\acra-4.5.0_da591b9fb64c199a7c3a6f0f6aee13d95d5c44f1.jar" />
+    </item>
+    <item
+        jar="C:\Users\Deveshwar\AndroidStudioProjects\Pingr\app\libs\nineoldandroids-2.4.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7">
+        <dex dex="C:\Users\Deveshwar\AndroidStudioProjects\Pingr\app\build\intermediates\pre-dexed\debug\nineoldandroids-2.4.0_35add0f72ca2c0f1813f9254fb76b110f2b00a30.jar" />
+    </item>
+
+</items>

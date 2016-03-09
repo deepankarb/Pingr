@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\rtt_orange.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\rtt_orange.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\rtt_yellow.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\rtt_yellow.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\elv_undo_btn_bg.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\elv_undo_btn_bg.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\rtt_green.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\rtt_green.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\elv_undo_btn_bg_pressed.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\elv_undo_btn_bg_pressed.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\rtt_red.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\rtt_red.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\elv_undo_btn_bg_focused.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\elv_undo_btn_bg_focused.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\elv_popup_bg.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\drawable\\elv_popup_bg.xml"
+    }
+]

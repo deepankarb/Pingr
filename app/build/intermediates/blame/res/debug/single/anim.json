@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\anim\\elv_popup_hide.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\anim\\elv_popup_hide.xml"
+    },
+    {
+        "merged": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\build\\intermediates\\res\\merged\\debug\\anim\\elv_popup_show.xml",
+        "source": "C:\\Users\\Deveshwar\\AndroidStudioProjects\\Pingr\\app\\src\\main\\res\\anim\\elv_popup_show.xml"
+    }
+]
