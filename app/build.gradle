@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-    compile files('libs/acra-4.5.0.jar')
+    compile 'ch.acra:acra:4.9.2'
     compile files('libs/annotations.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
 }
